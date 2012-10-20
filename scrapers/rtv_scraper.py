@@ -1,0 +1,45 @@
+import bs4
+import feedparser
+import requests
+
+class RTVScraper(object):
+    RTV_RSS_URLS = ["http://www.rtvslo.si/feeds/01.xml"]
+    RTV_ARTICLE_URL = "http://www.rtvslo.si/index.php?c_mod=news&op=print&id="
+
+    def get_news(self):
+        news = []
+        for rss_feed in self.RTV_RSS_URLS:
+            print "Parsing", rss_feed
+            feed_content = feedparser.parse(rss_feed)
+            for feed_entry in feed_content.entries:
+                link = feed_entry["link"]
+                article_id = link[link.rfind("/") + 1:]
+                news_item = self.get_article_text(article_id)
+                news_item["published"] = feed_entry["published_parsed"]
+                news_item["source"] = "RTVSlo"
+                news_item["language"] = "SI"
+                news.append(news_item)
+        return news
+
+    def get_article(self, article_id):
+        print "Grabbing article ID", article_id
+        url = self.RTV_ARTICLE_URL + str(article_id)
+        response = requests.get(url)
+        return response.text
+
+    def get_article_text(self, article_id):
+        article_html = self.get_article(article_id)
+        result = {}
+        article = bs4.BeautifulSoup(article_html)
+        result["title"] = article.title.text
+
+        subtitles = article.find_all("div", class_="subtitle")
+        subtitles = [div.text for div in subtitles]
+        result["subtitles"] = subtitles
+
+        text_content = article.find_all("p")
+        text_content = " ".join([p.text for p in text_content])
+        result["text"] = text_content
+        return result
+
+
