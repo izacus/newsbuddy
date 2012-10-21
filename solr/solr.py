@@ -1,5 +1,8 @@
+import calendar
+from datetime import datetime
 import json
 import logging
+import time
 import types
 import urllib
 import urllib2
@@ -15,6 +18,9 @@ def to_solr_date(date):
     """
     utc_date = date.astimezone(pytz.utc)
     return utc_date.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+def from_solr_date(date):
+     return datetime.fromtimestamp(calendar.timegm(time.strptime(date, "%Y-%m-%dT%H:%M:%SZ")), tz=pytz.utc)
 
 class SolrResults:
     def __init__(self):
