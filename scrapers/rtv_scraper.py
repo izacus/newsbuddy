@@ -1,6 +1,9 @@
 import bs4
 import feedparser
 import requests
+import hashlib
+from time import mktime
+from datetime import datetime
 
 class RTVScraper(object):
     RTV_RSS_URLS = ["http://www.rtvslo.si/feeds/01.xml"]
@@ -12,12 +15,23 @@ class RTVScraper(object):
             print "Parsing", rss_feed
             feed_content = feedparser.parse(rss_feed)
             for feed_entry in feed_content.entries:
+                # Download article
                 link = feed_entry["link"]
                 article_id = link[link.rfind("/") + 1:]
                 news_item = self.get_article_text(article_id)
-                news_item["published"] = feed_entry["published_parsed"]
+
+                published_st = feed_entry["published_parsed"]
+                # Convert struct_time to datetime
+                news_item["published"] = datetime.fromtimestamp(mktime(published_st))
                 news_item["source"] = "RTVSlo"
+                news_item["source_url"] = link
                 news_item["language"] = "SI"
+
+                # Generate ID from link
+                hash = hashlib.md5()
+                hash.update("RTVSlo")
+                hash.update(link)
+                news_item["id"] = hash.hexdigest()
                 news.append(news_item)
         return news
 
