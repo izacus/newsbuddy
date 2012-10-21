@@ -8,7 +8,7 @@ class NewsItem(Base):
 
     id = Column(String, primary_key=True)
     title = Column(UnicodeText)
-    published = Column(DateTime)
+    published = Column(DateTime(timezone=True))
     source = Column(Unicode)
     source_url = Column(Unicode)
     content = Column(UnicodeText)

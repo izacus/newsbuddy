@@ -1,4 +1,6 @@
+import calendar
 import bs4
+import pytz
 import feedparser
 import requests
 import hashlib
@@ -22,7 +24,8 @@ class RTVScraper(object):
 
                 published_st = feed_entry["published_parsed"]
                 # Convert struct_time to datetime
-                news_item["published"] = datetime.fromtimestamp(mktime(published_st))
+                published_date = datetime.fromtimestamp(calendar.timegm(published_st), tz=pytz.utc)
+                news_item["published"] = published_date
                 news_item["source"] = "RTVSlo"
                 news_item["source_url"] = link
                 news_item["language"] = "SI"

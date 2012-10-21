@@ -4,12 +4,17 @@ import types
 import urllib
 import urllib2
 import urlparse
+import pytz
 
 SOLR_ADD_BATCH = 200 # Number of documents to send in batch when adding
 logger = logging.getLogger(__name__)
 
 def to_solr_date(date):
-    return date.strftime("%Y-%m-%dT%H:%M:%SZ")
+    """
+    Solr demands ISO8601 time format in UTC timezone. This converts TZ and formats to compatible format.
+    """
+    utc_date = date.astimezone(pytz.utc)
+    return utc_date.strftime("%Y-%m-%dT%H:%M:%SZ")
 
 class SolrResults:
     def __init__(self):
