@@ -29,7 +29,7 @@ class RTVScraper(object):
                 news_item["published"] = published_date
                 news_item["source"] = "RTVSlo"
                 news_item["source_url"] = link
-                news_item["language"] = "SI"
+                news_item["language"] = "si"
 
                 # Generate ID from link
                 hash = hashlib.md5()
