@@ -8,7 +8,8 @@ from time import mktime
 from datetime import datetime
 
 class RTVScraper(object):
-    RTV_RSS_URLS = ["http://www.rtvslo.si/feeds/01.xml"]
+    RTV_RSS_URLS = ["http://www.rtvslo.si/feeds/01.xml", "http://www.rtvslo.si/feeds/16.xml", "http://www.rtvslo.si/feeds/04.xml",
+                    "http://www.rtvslo.si/feeds/05.xml"]
     RTV_ARTICLE_URL = "http://www.rtvslo.si/index.php?c_mod=news&op=print&id="
 
     def get_news(self):

@@ -33,9 +33,9 @@ def store_news(news):
         if news_item["id"] in existing_ids:
             continue
         db_item = NewsItem(id=news_item["id"], title=news_item["title"],
-            source=news_item["source"], source_url=news_item["source_url"],
-            published=news_item["published"], content=news_item["text"])
-        db_session.add(db_item)
+                           source=news_item["source"], source_url=news_item["source_url"],
+                           published=news_item["published"], content=news_item["text"])
+        db_session.merge(db_item)
         count += 1
 
     db_session.commit()

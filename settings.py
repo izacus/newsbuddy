@@ -1,4 +1,4 @@
-DB_CONNECTION_STRING = "sqlite:///news.db"
+DB_CONNECTION_STRING = "postgresql://postgres:postgres@localhost/news"
 
 # Dictionary of endpoints; key is a language code, value is URL
 SOLR_ENDPOINT_URLS = { "SI" : "http://localhost:8983/solr"}

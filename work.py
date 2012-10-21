@@ -1,5 +1,5 @@
 import scrapers
-from news_buddy import settings
+import settings
 import db.news
 from solr import solr
 
