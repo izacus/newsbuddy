@@ -138,11 +138,12 @@ class SolrInterface(object):
         """
 
         fields = [("q", query),
-                  ("json.nl", "map"), # Return facets as JSON objects
-                  ("fl", "*,score"), # Return score along with results
-                  ("start", str(start)),
-                  ("rows", str(rows))
-                 ]
+              ("json.nl", "map"), # Return facets as JSON objects
+              ("wt", "json"),
+              ("fl", "*,score"), # Return score along with results
+              ("start", str(start)),
+              ("rows", str(rows))
+             ]
 
         # Use shards parameter only if there are several cores active
         if len(self.endpoints) > 1:

@@ -1,11 +1,12 @@
 from db.news import NewsItem, create_news_db
 import scrapers
+import settings
 from solr import solr
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 def dispatch_to_solr(news):
-    solr_int = solr.SolrInterface({ "SI" : "http://localhost:8983/solr/"}, "SI")
+    solr_int = solr.SolrInterface(settings.SOLR_ENDPOINTS, settings.SOLR_DEFAULT_ENDPOINT)
     # Build documents for solr dispatch
     docs = []
     for news_item in news:
@@ -21,7 +22,7 @@ def dispatch_to_solr(news):
 
 def store_to_database(news):
     # Attempt to create database if it doesn't exist
-    db_engine = create_engine("sqlite:///news.db")
+    db_engine = create_engine(settings.DB_CONNECTION_STRING)
     create_news_db(db_engine)
     Session = sessionmaker(bind=db_engine)
 
