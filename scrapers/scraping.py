@@ -1,14 +1,19 @@
+import multiprocessing
+import itertools
 from rtv_scraper import RTVScraper
 from scrapers.delo_scraper import DeloScraper
+from scrapers.dnevnik_scraper import DnevnikScraper
 from scrapers.zurnal_scraper import ZurnalScraper
 
 def scrape_news():
+    scrapers = [RTVScraper(), ZurnalScraper(), DeloScraper(), DnevnikScraper()]
     print "Scraping news!"
-    news = []
-    rtv_scraper = RTVScraper()
-    news.extend(rtv_scraper.get_news())
-    zurnal_scraper = ZurnalScraper()
-    news.extend(zurnal_scraper.get_news())
-    delo_scraper = DeloScraper()
-    news.extend(delo_scraper.get_news())
+
+    pool = multiprocessing.Pool(processes=4)
+    result = pool.map(get_news, scrapers)
+
+    news = [item for sublist in result for item in sublist]
     return news
+
+def get_news(scraper):
+    return scraper.get_news()
