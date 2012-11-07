@@ -33,6 +33,7 @@ class ZurnalScraper(object):
         return news
 
     def get_article(self, article_id):
+        print "[Zurnal] Grabbing article ID", article_id
         url = self.ZURNAL_PRINT_URL + str(article_id)
         response = requests.get(url)
         return response.text

@@ -4,7 +4,6 @@ import pytz
 import feedparser
 import requests
 import hashlib
-from time import mktime
 from datetime import datetime
 
 class RTVScraper(object):
@@ -40,7 +39,7 @@ class RTVScraper(object):
         return news
 
     def get_article(self, article_id):
-        print "Grabbing article ID", article_id
+        print "[RTVSlo] Grabbing article ID", article_id
         url = self.RTV_ARTICLE_URL + str(article_id)
         response = requests.get(url)
         return response.text
