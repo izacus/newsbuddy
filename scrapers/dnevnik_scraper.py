@@ -1,10 +1,6 @@
-import calendar
-from datetime import datetime
-import hashlib
 import bs4
 import feedparser
-import pytz
-import requests
+from scrapers.utils import time_to_datetime, get_hash, get_article
 
 class DnevnikScraper(object):
     DNEVNIK_RSS_URL = "http://www.dnevnik.si/rss"
@@ -18,18 +14,12 @@ class DnevnikScraper(object):
             link = feed_entry["link"]
             article = self.get_article_text(link)
             if article is None: continue
-
-            published_st = feed_entry["published_parsed"]
-            published_date = datetime.fromtimestamp(calendar.timegm(published_st), tz=pytz.utc)
+            published_date = time_to_datetime(feed_entry["published_parsed"])
             article["published"] = published_date
             article["source"] = "Dnevnik"
             article["source_url"] = link
             article["language"] = "si"
-            # Generate ID from link
-            hash = hashlib.md5()
-            hash.update("Dnevnik")
-            hash.update(link)
-            article["id"] = hash.hexdigest()
+            article["id"] = get_hash(link)
             news.append(article)
 
             max_counter -= 1
@@ -37,13 +27,9 @@ class DnevnikScraper(object):
                 break
         return news
 
-    def get_article(self, link):
-        print "[Dnevnik] Grabbing article", link
-        response = requests.get(link)
-        return response.text
-
     def get_article_text(self, link):
-        article_html = self.get_article(link)
+        print "[Dnevnik] Grabbing article", link
+        article_html = get_article(link)
         result = {}
 
         article = bs4.BeautifulSoup(article_html)

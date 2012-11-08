@@ -1,10 +1,6 @@
-import calendar
 import bs4
-import pytz
 import feedparser
-import requests
-import hashlib
-from datetime import datetime
+from scrapers.utils import get_article, get_hash, time_to_datetime
 
 class RTVScraper(object):
     RTV_RSS_URLS = ["http://www.rtvslo.si/feeds/01.xml", "http://www.rtvslo.si/feeds/16.xml", "http://www.rtvslo.si/feeds/04.xml",
@@ -21,31 +17,18 @@ class RTVScraper(object):
                 link = feed_entry["link"]
                 article_id = link[link.rfind("/") + 1:]
                 news_item = self.get_article_text(article_id)
-
-                published_st = feed_entry["published_parsed"]
-                # Convert struct_time to datetime
-                published_date = datetime.fromtimestamp(calendar.timegm(published_st), tz=pytz.utc)
+                published_date = time_to_datetime(feed_entry["published_parsed"])
                 news_item["published"] = published_date
                 news_item["source"] = "RTVSlo"
                 news_item["source_url"] = link
                 news_item["language"] = "si"
-
-                # Generate ID from link
-                hash = hashlib.md5()
-                hash.update("RTVSlo")
-                hash.update(link)
-                news_item["id"] = hash.hexdigest()
+                news_item["id"] = get_hash(link)
                 news.append(news_item)
         return news
 
-    def get_article(self, article_id):
-        print "[RTVSlo] Grabbing article ID", article_id
-        url = self.RTV_ARTICLE_URL + str(article_id)
-        response = requests.get(url)
-        return response.text
-
     def get_article_text(self, article_id):
-        article_html = self.get_article(article_id)
+        print "[RTVSlo] Grabbing article ID", article_id
+        article_html = get_article(self.RTV_ARTICLE_URL + str(article_id))
         result = {}
         article = bs4.BeautifulSoup(article_html)
         result["title"] = article.title.text

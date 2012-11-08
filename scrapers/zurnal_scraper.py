@@ -1,10 +1,6 @@
-import calendar
-from datetime import datetime
-import hashlib
 import bs4
 import feedparser
-import pytz
-import requests
+from scrapers.utils import get_article, get_hash, time_to_datetime
 
 class ZurnalScraper(object):
 
@@ -18,32 +14,22 @@ class ZurnalScraper(object):
             link = feed_entry["link"]
             article_id = link[link.rfind("-") + 1:]
             article = self.get_article_text(article_id)
-            published_st = feed_entry["published_parsed"]
-            published_date = datetime.fromtimestamp(calendar.timegm(published_st), tz=pytz.utc)
+            published_date = time_to_datetime(feed_entry["published_parsed"])
             article["published"] = published_date
             article["source"] = "Zurnal24"
             article["source_url"] = link
             article["language"] = "si"
             # Generate ID from link
-            hash = hashlib.md5()
-            hash.update("Zurnal24")
-            hash.update(link)
-            article["id"] = hash.hexdigest()
+            article["id"] = get_hash(link)
             news.append(article)
         return news
 
-    def get_article(self, article_id):
-        print "[Zurnal] Grabbing article ID", article_id
-        url = self.ZURNAL_PRINT_URL + str(article_id)
-        response = requests.get(url)
-        return response.text
-
     def get_article_text(self, article_id):
-        article_html = self.get_article(article_id)
+        print "[Zurnal] Grabbing article ID", article_id
+        article_html = get_article(self.ZURNAL_PRINT_URL + str(article_id))
         result = {}
         article = bs4.BeautifulSoup(article_html)
         result["title"] = article.body.article.hgroup.h1.text
-
         content_div = article.find_all("div", class_="entry")
         result["text"] = content_div[0].text
         return result

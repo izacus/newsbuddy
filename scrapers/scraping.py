@@ -1,5 +1,4 @@
 import multiprocessing
-import itertools
 from rtv_scraper import RTVScraper
 from scrapers.delo_scraper import DeloScraper
 from scrapers.dnevnik_scraper import DnevnikScraper

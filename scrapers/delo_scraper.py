@@ -1,10 +1,6 @@
-import calendar
-from datetime import datetime
-import hashlib
 import bs4
 import feedparser
-import pytz
-import requests
+from scrapers.utils import time_to_datetime, get_hash, get_article
 
 class DeloScraper(object):
     DELO_RSS_URL = "http://www.delo.si/rss/"
@@ -16,30 +12,19 @@ class DeloScraper(object):
             link = feed_entry["link"]
             article = self.get_article_text(link)
             if article is None: continue
-
-            published_st = feed_entry["published_parsed"]
-            published_date = datetime.fromtimestamp(calendar.timegm(published_st), tz=pytz.utc)
+            published_date = time_to_datetime(feed_entry["published_parsed"])
             article["published"] = published_date
             article["source"] = "Delo"
             article["source_url"] = link
             article["language"] = "si"
-
-            # Generate ID from link
-            hash = hashlib.md5()
-            hash.update("Delo")
-            hash.update(link)
-            article["id"] = hash.hexdigest()
+            article["id"] = get_hash(link)
             news.append(article)
         print news
         return news
 
-    def get_article(self, link):
-        print "[Delo] Grabbing article", link
-        response = requests.get(link)
-        return response.text
-
     def get_article_text(self, link):
-        article_html = self.get_article(link)
+        print "[Delo] Grabbing article", link
+        article_html = get_article(link)
         result = {}
         article = bs4.BeautifulSoup(article_html)
         result["title"] = article.title.text.strip()
