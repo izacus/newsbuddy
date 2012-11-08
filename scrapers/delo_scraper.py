@@ -24,7 +24,6 @@ class DeloScraper(object):
             article["language"] = "si"
             article["id"] = get_hash(link)
             news.append(article)
-        print news
         return news
 
     def get_article_text(self, link):

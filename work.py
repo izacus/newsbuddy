@@ -1,3 +1,4 @@
+import logging
 import scrapers
 import settings
 import db.news
@@ -19,6 +20,8 @@ def dispatch_to_solr(news):
     solr_int.commit()
 
 if __name__ == "__main__":
+    logging.basicConfig()
+
     existing_ids = db.news.get_latest_ids(1000)
     news = scrapers.scrape_news(existing_ids)
     db.news.store_news(news)
