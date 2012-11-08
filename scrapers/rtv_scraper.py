@@ -7,7 +7,7 @@ class RTVScraper(object):
                     "http://www.rtvslo.si/feeds/05.xml"]
     RTV_ARTICLE_URL = "http://www.rtvslo.si/index.php?c_mod=news&op=print&id="
 
-    def get_news(self):
+    def get_news(self, existing_ids=None):
         news = []
         for rss_feed in self.RTV_RSS_URLS:
             print "Parsing", rss_feed
@@ -15,6 +15,11 @@ class RTVScraper(object):
             for feed_entry in feed_content.entries:
                 # Download article
                 link = feed_entry["link"]
+
+                if existing_ids and get_hash(link) in existing_ids:
+                    print "Skipping", link
+                    continue
+
                 article_id = link[link.rfind("/") + 1:]
                 news_item = self.get_article_text(article_id)
                 published_date = time_to_datetime(feed_entry["published_parsed"])

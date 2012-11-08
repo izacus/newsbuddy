@@ -1,5 +1,5 @@
 import settings
-from sqlalchemy import Column, String, UnicodeText, DateTime, Unicode, create_engine
+from sqlalchemy import Column, String, UnicodeText, DateTime, Unicode, create_engine, desc
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
@@ -17,6 +17,13 @@ class NewsItem(Base):
 
 def create_news_db(engine):
     Base.metadata.create_all(engine)
+
+def get_latest_ids(limit=500):
+    db_engine = create_engine(settings.DB_CONNECTION_STRING)
+    Session = sessionmaker(bind=db_engine)
+    db_sesion = Session()
+    existsing_ids = {id[0] for id in db_sesion.query(NewsItem.id).order_by(desc(NewsItem.published))[:100]}
+    return existsing_ids
 
 def store_news(news):
     # Attempt to create database if it doesn't exist

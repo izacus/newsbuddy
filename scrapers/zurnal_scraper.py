@@ -7,11 +7,16 @@ class ZurnalScraper(object):
     ZURNAL_RSS_URL = "http://www.zurnal24.si/index.php?ctl=show_rss&url_alias=novice"
     ZURNAL_PRINT_URL = "http://www.zurnal24.si/print/"
 
-    def get_news(self):
+    def get_news(self, existing_ids=None):
         news = []
         feed_content = feedparser.parse(self.ZURNAL_RSS_URL)
         for feed_entry in feed_content.entries:
             link = feed_entry["link"]
+
+            if existing_ids and get_hash(link) in existing_ids:
+                print "Skipping", link
+                continue
+
             article_id = link[link.rfind("-") + 1:]
             article = self.get_article_text(article_id)
             published_date = time_to_datetime(feed_entry["published_parsed"])

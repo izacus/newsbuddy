@@ -1,4 +1,4 @@
 import scraping
 
-def scrape_news():
-    return scraping.scrape_news()
+def scrape_news(existing_ids=None):
+    return scraping.scrape_news(existing_ids)
