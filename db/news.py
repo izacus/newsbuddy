@@ -20,6 +20,7 @@ def create_news_db(engine):
 
 def get_latest_ids(limit=500):
     db_engine = create_engine(settings.DB_CONNECTION_STRING)
+    create_news_db(db_engine)
     Session = sessionmaker(bind=db_engine)
     db_sesion = Session()
     existsing_ids = {id[0] for id in db_sesion.query(NewsItem.id).order_by(desc(NewsItem.published))[:100]}
@@ -28,7 +29,6 @@ def get_latest_ids(limit=500):
 def store_news(news):
     # Attempt to create database if it doesn't exist
     db_engine = create_engine(settings.DB_CONNECTION_STRING)
-    create_news_db(db_engine)
     Session = sessionmaker(bind=db_engine)
 
     db_session = Session()

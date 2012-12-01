@@ -16,6 +16,19 @@ def get_news(request):
     if results is None:
         return { "error" : "Failed to connect to news search server." }
 
-    documents = [ { "title" : doc["title"], "published" : solr.from_solr_date(doc["published"]).isoformat(),
-                    "content" : doc["content"], "link":doc["source_url"], "source" : doc["source"] } for doc in results.documents]
+    documents = []
+    for doc in results.documents:
+        document = { "published" : solr.from_solr_date(doc["published"]).isoformat(), "link":doc["source_url"],
+                     "source" : doc["source"] }
+
+        if u"title" in results.highlights[doc["id"]]:
+            document["title"] = results.highlights[doc["id"]][u"title"]
+        else:
+            document["title"] = doc["title"]
+
+        if u"content" in results.highlights[doc["id"]]:
+            document["snippet"] = results.highlights[doc["id"]][u"content"]
+
+        documents.append(document)
+
     return { "results" : documents}

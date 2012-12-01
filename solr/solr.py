@@ -50,7 +50,7 @@ class SolrInterface(object):
         """
 
         # Check document language and dispatch to correct core
-        url = urlparse.urljoin(core_url, "update/json/")
+        url = urlparse.urljoin(core_url, "update/")
         try:
             request = urllib2.Request(url, json_command, {'Content-Type':'application/json'})
             response = urllib2.urlopen(request).read()
@@ -166,7 +166,7 @@ class SolrInterface(object):
 
         # Do request to Solr server to default endpoint (other cores will be queried over distributed shard functionality)
         assert self.default_endpoint in self.endpoints
-        request_url = "/".join([self.endpoints[self.default_endpoint], "select/"])
+        request_url = "/".join([self.endpoints[self.default_endpoint].rstrip('/'), "select/"])
         data = urllib.urlencode([(k,v.encode('utf-8')) for k,v in fields])
 
         try:
