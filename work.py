@@ -9,7 +9,6 @@ def dispatch_to_solr(news):
     # Build documents for solr dispatch
     docs = []
     for news_item in news:
-        print u"Dispatching ", news_item["title"]
         doc = { "id" : news_item["id"], "title" : news_item["title"],
                 "source" : news_item["source"], "language" : news_item["language"],
                 "source_url" : news_item["source_url"], "content" : news_item["text"],
@@ -18,6 +17,7 @@ def dispatch_to_solr(news):
 
     solr_int.add(docs)
     solr_int.commit()
+    print "Dispatch done."
 
 if __name__ == "__main__":
     logging.basicConfig()

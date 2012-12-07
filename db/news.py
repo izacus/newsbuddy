@@ -23,7 +23,7 @@ def get_latest_ids(limit=500):
     create_news_db(db_engine)
     Session = sessionmaker(bind=db_engine)
     db_sesion = Session()
-    existsing_ids = {id[0] for id in db_sesion.query(NewsItem.id).order_by(desc(NewsItem.published))[:100]}
+    existsing_ids = set(id[0] for id in db_sesion.query(NewsItem.id).order_by(desc(NewsItem.published))[:100])
     return existsing_ids
 
 def store_news(news):
@@ -33,7 +33,7 @@ def store_news(news):
 
     db_session = Session()
     ids = [news_item["id"] for news_item in news]
-    existing_ids = {id[0] for id in db_session.query(NewsItem.id).filter(NewsItem.id.in_(ids)).all()}
+    existing_ids = set(id[0] for id in db_session.query(NewsItem.id).filter(NewsItem.id.in_(ids)).all())
 
     count = 0
     for news_item in news:
