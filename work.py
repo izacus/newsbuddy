@@ -25,4 +25,6 @@ if __name__ == "__main__":
     existing_ids = db.news.get_latest_ids(1000)
     news = scrapers.scrape_news(existing_ids)
     db.news.store_news(news)
-    dispatch_to_solr(news)
+
+    if settings.SOLR_ENDPOINT_URLS is not None:
+        dispatch_to_solr(news)

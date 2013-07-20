@@ -10,6 +10,7 @@ class NewsItem(Base):
 
     id = Column(String, primary_key=True)
     title = Column(UnicodeText)
+    author = Column(UnicodeText)
     published = Column(DateTime(timezone=True))
     source = Column(Unicode)
     source_url = Column(Unicode)
@@ -41,7 +42,7 @@ def store_news(news):
             continue
         db_item = NewsItem(id=news_item["id"], title=news_item["title"],
                            source=news_item["source"], source_url=news_item["source_url"],
-                           published=news_item["published"], content=news_item["text"])
+                           published=news_item["published"], content=news_item["text"], author=news_item["author"])
         db_session.merge(db_item)
         count += 1
 

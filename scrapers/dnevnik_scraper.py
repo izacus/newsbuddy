@@ -44,6 +44,12 @@ class DnevnikScraper(object):
             return None
 
         result["title"] = title.text.strip()
+        
+        author = article.body.find(class_="article-source")
+        if author is not None and author.strong is not None:
+            result["author"] = author.strong.text
+        else:
+            result["author"] = None
 
         subtitle = article.body.find('p', class_="intro-box", text=True)
         if subtitle is not None:

@@ -6,7 +6,7 @@ from scrapers.dnevnik_scraper import DnevnikScraper
 from scrapers.zurnal_scraper import ZurnalScraper
 
 def scrape_news(existing_ids=None):
-    scrapers = [RTVScraper(), ZurnalScraper(), DeloScraper(), DnevnikScraper()]
+    scrapers = [DnevnikScraper()] #RTVScraper(), ZurnalScraper(), DeloScraper(), DnevnikScraper()]
     print "Scraping news!"
 
     pool = multiprocessing.Pool(processes=4)
