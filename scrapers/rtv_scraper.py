@@ -27,6 +27,7 @@ class RTVScraper(object):
                 news_item["source"] = "RTVSlo"
                 news_item["source_url"] = link
                 news_item["language"] = "si"
+                news_item["author"] = None
                 news_item["id"] = get_hash(link)
                 news.append(news_item)
         return news
