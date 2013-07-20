@@ -43,6 +43,12 @@ class DeloScraper(object):
         content_item = article.find(id="D_NEWS")
         if content_item is None:
             content_item = article.find(id="D_NEWS_MNENJA")
+        
+        author = article.find(class_="d_author")
+        if author is not None:
+            result["author"] = author.text.strip()
+        else:
+            result["author"] = None
 
         if content_item is not None:
             text_content = " ".join([p_item.text.strip() for p_item in content_item.find_all('p', text=True) if p_item is not None])
