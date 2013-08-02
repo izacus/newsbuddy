@@ -1,4 +1,5 @@
 import settings
+import pytz
 from sqlalchemy import Column, String, UnicodeText, DateTime, Unicode, create_engine, desc
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -11,7 +12,7 @@ class NewsItem(Base):
     id = Column(String, primary_key=True)
     title = Column(UnicodeText)
     author = Column(UnicodeText)
-    published = Column(DateTime(timezone=True))
+    published = Column(DateTime(timezone=False))
     source = Column(Unicode)
     source_url = Column(Unicode)
     content = Column(UnicodeText)
@@ -45,7 +46,7 @@ def store_news(news):
 
         db_item = NewsItem(id=news_item["id"], title=news_item["title"],
                            source=news_item["source"], source_url=news_item["source_url"],
-                           published=news_item["published"], content=news_item["text"], author=news_item["author"])
+                           published=news_item["published"].astimezone(pytz.utc).replace(tzinfo=None), content=news_item["text"], author=news_item["author"])
         db_session.add(db_item)
         count += 1
 
