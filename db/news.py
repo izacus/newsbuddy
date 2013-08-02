@@ -9,7 +9,7 @@ Base = declarative_base()
 class NewsItem(Base):
     __tablename__ = "news"
 
-    id = Column(String, primary_key=True)
+    id = Column(String(128), primary_key=True)
     title = Column(UnicodeText)
     author = Column(UnicodeText)
     published = Column(DateTime(timezone=False))
