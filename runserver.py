@@ -7,7 +7,7 @@ if __name__ == "__main__":
     config = Configurator()
     config.include('cornice')
     register_service_views(config, api.query.news_query)
-
+    config.add_static_view('', 'ui')
     app = config.make_wsgi_app()
     server = make_server('0.0.0.0', 8005, app)
     server.serve_forever()
