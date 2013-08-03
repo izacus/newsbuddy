@@ -17,4 +17,6 @@ def scrape_news(existing_ids=None):
 
 def get_news(options):
     scraper, existing_ids = options
+    
+
     return scraper.get_news(existing_ids)

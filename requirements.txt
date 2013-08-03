@@ -5,3 +5,4 @@ sqlalchemy
 pyramid
 cornice
 pytz
+pysolarized
