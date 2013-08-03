@@ -1,1 +1,46 @@
-Juhu,
+<!DOCTYPE html>
+<html lang="sl" ng-app>
+  <head>
+    <title>Novičar</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="css/ui.css" rel="stylesheet" media="screen">
+  </head>
+  <body ng-controller="SearchResultsController">
+
+    <div class="navbar navbar-inverse">
+        <a class="navbar-brand" href="#">Novičar</a>
+    </div>
+    
+    <div class="container">
+    <form>
+        <fieldset>
+            <div class="input-group">
+                <input type="text" class="input-large form-control" id="query" placeholder="Iskalni niz">
+            </div>
+        </fieldset>
+    </form>
+
+    <ul>
+        <li class="list-unstyled" ng-repeat="result in results | orderBy: result.published">
+            <h4>
+                <a href="{{result.link}}"><span ng-bind-html-unsafe="result.title">{{ result.title }}</span> {{ result.author }}</a>
+            </h4>
+            {{ result.source }}, {{ result.published | date:'short' }}
+        <blockquote ng-repeat="snippet in result.snippet">
+            ... <span ng-bind-html-unsafe="snippet">{{ snippet }}</span> ... 
+        </blockquote>
+        </li>
+    </ul>
+
+    </div>
+    <!-- JavaScript plugins (requires jQuery) -->
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/angular.min.js"></script>
+    <script src="js/controller.js"></script>
+  </body>
+</html>
