@@ -14,11 +14,11 @@
         <a class="navbar-brand" href="#">Novičar</a>
     </div>
     
-    <div class="container">
+    <div class="container" ng-submit="search()">
     <form>
         <fieldset>
             <div class="input-group">
-                <input type="text" class="input-large form-control" id="query" placeholder="Iskalni niz">
+                <input ng-model="query" type="text" class="input-large form-control" id="query" placeholder="Iskalni niz">
             </div>
         </fieldset>
     </form>
@@ -28,9 +28,9 @@
             <h4>
                 <a href="{{result.link}}"><span ng-bind-html-unsafe="result.title">{{ result.title }}</span> {{ result.author }}</a>
             </h4>
-            {{ result.source }}, {{ result.published | date:'short' }}
         <blockquote ng-repeat="snippet in result.snippet">
-            ... <span ng-bind-html-unsafe="snippet">{{ snippet }}</span> ... 
+            ... <span ng-bind-html-unsafe="snippet">{{ snippet }}</span> ...
+            <small><cite>{{ result.source }}</cite>;  {{ result.published | date:'mediumDate' }} {{ result.published | date:'shortTime' }}</small>
         </blockquote>
         </li>
     </ul>
@@ -41,6 +41,7 @@
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="js/bootstrap.min.js"></script>
     <script src="js/angular.min.js"></script>
+    <script src="js/angular-locale_sl-si.js"></script>
     <script src="js/controller.js"></script>
   </body>
 </html>
