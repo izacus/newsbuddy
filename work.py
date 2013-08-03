@@ -14,6 +14,10 @@ def dispatch_to_solr(news):
                 "source" : news_item["source"], "language" : news_item["language"],
                 "source_url" : news_item["source_url"], "content" : news_item["text"],
                 "published" : to_solr_date(news_item["published"]) }
+        
+        if news_item["author"] is not None:
+            doc["author"] = news_item["author"]
+
         docs.append(doc)
 
     solr_int.add(docs)

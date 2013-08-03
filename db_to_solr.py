@@ -15,7 +15,11 @@ if __name__ == "__main__":
         doc = { "id" : news_item.id, "title" : news_item.title,
                 "source" : news_item.source, "language" : "si",
                 "source_url" : news_item.source_url, "content" : news_item.content,
-                "published" : to_solr_date(news_item.published.replace(tzinfo=pytz.utc)) }    
+                "published" : to_solr_date(news_item.published.replace(tzinfo=pytz.utc)) }  
+        
+        if news_item.author is not None:
+            doc["author"] = news_item.author
+
         docs.append(doc)
 
     solr_int.add(docs)

@@ -19,8 +19,11 @@ def get_news(request):
 
     documents = []
     for doc in results.documents:
-        document = { "published" : from_solr_date(doc["published"]).isoformat(), "link":doc["source_url"],
-                     "source" : doc["source"] }
+        document = { "published" : str(from_solr_date(doc["published"]).isoformat()) + "Z", "link":doc["source_url"],
+                "source" : doc["source"] }
+
+        if "author" in doc and doc["author"] is not None:
+            document["author"] = doc["author"]
 
         if u"title" in results.highlights[doc["id"]]:
             document["title"] = results.highlights[doc["id"]][u"title"]
