@@ -1,6 +1,7 @@
 from cornice import Service
 import settings
-from solr import solr
+from pysolarized import solr
+from pysolarized import from_solr_date
 
 news_query = Service(name="news_query", path="/news/query/", description="Returns news matching the query")
 
@@ -10,7 +11,7 @@ def get_news(request):
         return { "error" : "Missing q query parameter." }
 
 
-    solr_int = solr.SolrInterface(settings.SOLR_ENDPOINT_URLS, settings.SOLR_DEFAULT_ENDPOINT)
+    solr_int = solr.Solr(settings.SOLR_ENDPOINT_URLS, settings.SOLR_DEFAULT_ENDPOINT)
     results = solr_int.query(request.GET["q"], sort=["published desc"])
 
     if results is None:
@@ -18,7 +19,7 @@ def get_news(request):
 
     documents = []
     for doc in results.documents:
-        document = { "published" : solr.from_solr_date(doc["published"]).isoformat(), "link":doc["source_url"],
+        document = { "published" : from_solr_date(doc["published"]).isoformat(), "link":doc["source_url"],
                      "source" : doc["source"] }
 
         if u"title" in results.highlights[doc["id"]]:
