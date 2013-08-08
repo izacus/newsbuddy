@@ -13,8 +13,8 @@ class NewsItem(Base):
     title = Column(UnicodeText)
     author = Column(UnicodeText)
     published = Column(DateTime(timezone=False))
-    source = Column(Unicode)
-    source_url = Column(Unicode)
+    source = Column(UnicodeText)
+    source_url = Column(UnicodeText)
     content = Column(UnicodeText)
 
 def create_news_db(engine):
