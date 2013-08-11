@@ -24,6 +24,11 @@
         </fieldset>
     </form>
 
+    <br />
+    <div class="progress progress-striped active" ng-show="loading">
+        <div class="progress-bar" style="width: 100%"></div>
+    </div>
+
     <ul>
         <li class="list-unstyled" ng-repeat="result in results | orderBy: result.published">
             <h4>

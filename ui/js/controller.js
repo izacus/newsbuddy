@@ -1,10 +1,11 @@
 function SearchResultsController($scope, $http) {
 
     $scope.search = function() {
-        console.info($scope.query)
+        $scope.loading = true;
+        $scope.results = null; 
         $http.get('/news/query/?q=' + $scope.query).success(function data(data) {
             $scope.results = data["results"];
-            console.info(data);
+            $scope.loading = false;
         });
     }
 }
