@@ -1,6 +1,10 @@
 import bs4
 import feedparser
 from scrapers.utils import get_article, get_hash, time_to_datetime
+import logging
+
+logger = logging.getLogger("scraper.rtvslo")
+
 
 class RTVScraper(object):
     RTV_RSS_URLS = ["http://www.rtvslo.si/feeds/01.xml", "http://www.rtvslo.si/feeds/16.xml", "http://www.rtvslo.si/feeds/04.xml",
@@ -10,14 +14,14 @@ class RTVScraper(object):
     def get_news(self, existing_ids=None):
         news = []
         for rss_feed in self.RTV_RSS_URLS:
-            print "Parsing", rss_feed
+            logger.debug("Parsing %s", rss_feed)
             feed_content = feedparser.parse(rss_feed)
             for feed_entry in feed_content.entries:
                 # Download article
                 link = feed_entry["link"]
 
                 if existing_ids and get_hash(link) in existing_ids:
-                    print "Skipping", link
+                    logger.debug("Skipping %s", link)
                     continue
 
                 article_id = link[link.rfind("/") + 1:]
@@ -33,7 +37,7 @@ class RTVScraper(object):
         return news
 
     def get_article_text(self, article_id):
-        print "[RTVSlo] Grabbing article ID", article_id
+        logger.debug("[RTVSlo] Grabbing article ID %s", article_id)
         article_html = get_article(self.RTV_ARTICLE_URL + str(article_id))
         result = {}
         article = bs4.BeautifulSoup(article_html)

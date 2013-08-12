@@ -1,6 +1,10 @@
 import bs4
 import feedparser
 from scrapers.utils import time_to_datetime, get_hash, get_article
+import logging
+
+logger = logging.getLogger("scraper.dnevnik")
+
 
 class DnevnikScraper(object):
     DNEVNIK_RSS_URL = "http://www.dnevnik.si/rss"
@@ -14,7 +18,7 @@ class DnevnikScraper(object):
             link = feed_entry["link"]
 
             if existing_ids and get_hash(link) in existing_ids:
-                print "Skipping", link
+                logger.debug("Skipping %s", link)
                 continue
 
             article = self.get_article_text(link)
@@ -33,7 +37,7 @@ class DnevnikScraper(object):
         return news
 
     def get_article_text(self, link):
-        print "[Dnevnik] Grabbing article", link
+        logger.debug("Grabbing article %s", link)
         article_html = get_article(link)
         result = {}
 

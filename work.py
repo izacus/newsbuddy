@@ -5,6 +5,8 @@ import db.news
 from pysolarized import to_solr_date
 from pysolarized import solr
 
+logger = logging.getLogger("newsbuddy")
+
 def dispatch_to_solr(news):
     solr_int = solr.Solr(settings.SOLR_ENDPOINT_URLS, settings.SOLR_DEFAULT_ENDPOINT)
     # Build documents for solr dispatch
@@ -25,11 +27,24 @@ def dispatch_to_solr(news):
     print "Dispatch done."
 
 if __name__ == "__main__":
-    logging.basicConfig()
+    logging.basicConfig(level=logging.DEBUG)
+    
+    if settings.SENTRY_CONNECTION_STRING is not None:
+        from raven import Client
+        from raven.handlers.logging import SentryHandler
+        from raven.conf import setup_logging
+        client = Client(settings.SENTRY_CONNECTION_STRING)
+        handler = SentryHandler(client)
+        setup_logging(handler)
 
-    existing_ids = db.news.get_latest_ids(1000)
-    news = scrapers.scrape_news(existing_ids)
-    db.news.store_news(news)
 
-    if settings.SOLR_ENDPOINT_URLS is not None:
-        dispatch_to_solr(news)
+    try:
+        existing_ids = db.news.get_latest_ids(2000)
+        news = scrapers.scrape_news(existing_ids)
+        db.news.store_news(news)
+
+        if settings.SOLR_ENDPOINT_URLS is not None:
+            dispatch_to_solr(news)
+
+    except Exception as e:
+        logger.error("Failed to process work packet!", exc_info=True)

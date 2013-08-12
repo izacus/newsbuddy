@@ -4,6 +4,9 @@ from rtv_scraper import RTVScraper
 from scrapers.delo_scraper import DeloScraper
 from scrapers.dnevnik_scraper import DnevnikScraper
 from scrapers.zurnal_scraper import ZurnalScraper
+import logging
+
+logger = logging.getLogger("scraper")
 
 def scrape_news(existing_ids=None):
     scrapers = [RTVScraper(), ZurnalScraper(), DeloScraper(), DnevnikScraper()]
@@ -17,6 +20,10 @@ def scrape_news(existing_ids=None):
 
 def get_news(options):
     scraper, existing_ids = options
-    
 
-    return scraper.get_news(existing_ids)
+    try:
+        news = scraper.get_news(existing_ids)    
+    except Exception as e:
+        logger.error("Failed to parse news from %s", scraper, exc_info=True)
+
+    return news

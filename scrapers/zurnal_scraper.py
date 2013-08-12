@@ -1,6 +1,9 @@
 import bs4
 import feedparser
 from scrapers.utils import get_article, get_hash, time_to_datetime
+import logging
+
+logger = logging.getLogger("scraper.zurnal")
 
 class ZurnalScraper(object):
 
@@ -14,7 +17,7 @@ class ZurnalScraper(object):
             link = feed_entry["link"]
 
             if existing_ids and get_hash(link) in existing_ids:
-                print "Skipping", link
+                logger.debug("Skipping %s", link)
                 continue
 
             article_id = link[link.rfind("-") + 1:]
@@ -30,7 +33,7 @@ class ZurnalScraper(object):
         return news
 
     def get_article_text(self, article_id):
-        print "[Zurnal] Grabbing article ID", article_id
+        logger.debug("Grabbing article ID %s", article_id)
         article_html = get_article(self.ZURNAL_PRINT_URL + str(article_id))
         result = {}
         article = bs4.BeautifulSoup(article_html)

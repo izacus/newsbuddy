@@ -1,6 +1,9 @@
 import bs4
 import feedparser
 from scrapers.utils import time_to_datetime, get_hash, get_article
+import logging
+
+logger = logging.getLogger("scraper.delo")
 
 class DeloScraper(object):
     DELO_RSS_URL = "http://www.delo.si/rss/"
@@ -12,7 +15,7 @@ class DeloScraper(object):
             link = feed_entry["link"]
 
             if existing_ids and get_hash(link) in existing_ids:
-                print "Skipping", link
+                logger.debug("Skipping %s", link)
                 continue
 
             article = self.get_article_text(link)
@@ -27,7 +30,7 @@ class DeloScraper(object):
         return news
 
     def get_article_text(self, link):
-        print "[Delo] Grabbing article", link
+        logger.debug("Grabbing article %s", link)
         article_html = get_article(link)
         result = {}
         article = bs4.BeautifulSoup(article_html)
@@ -55,6 +58,6 @@ class DeloScraper(object):
             result["text"] = text_content
             return result
         else:
-            print "Unknown article content for", link
+            logger.warn("Unknown article content for %s", link)
             return None
 
