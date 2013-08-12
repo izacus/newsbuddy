@@ -40,7 +40,11 @@ def get_news(request):
     if results.facets is not None:
         r["facets"] = {}
         if "published" in results.facets:
-            r["facets"]["published"] = results.facets["published"]
+
+            # Remove "before" or "after" facet fields if they have 0 results
+            published_facets = [ facet for facet in results.facets["published"] \
+                    if not ((facet[0] == "before" and facet[1] == 0) or (facet[0] == "after" and facet[1] == 0))]
+            r["facets"]["published"] = published_facets
         if "source" in results.facets:
             r["facets"]["source"] = results.facets["source"]
 

@@ -29,18 +29,31 @@
         <div class="progress-bar" style="width: 100%"></div>
     </div>
 
-    <ul>
-        <li class="list-unstyled" ng-repeat="result in results | orderBy: result.published">
-            <h4>
-                <a href="{{result.link}}"><span ng-bind-html-unsafe="result.title">{{ result.title }}</span> {{ result.author }}</a>
-            </h4>
-        <blockquote ng-repeat="snippet in result.snippet">
-            ... <span ng-bind-html-unsafe="snippet">{{ snippet }}</span> ...
-            <small><cite>{{ result.source }}</cite>;  {{ result.published | date:'mediumDate' }} {{ result.published | date:'shortTime' }}</small>
-        </blockquote>
-        </li>
-    </ul>
-
+    <div class="row">
+        <div class="col-lg-8">
+            <ul>
+                <li class="list-unstyled" ng-repeat="result in results">
+                    <h4>
+                        <a href="{{result.link}}"><span ng-bind-html-unsafe="result.title">{{ result.title }}</span> {{ result.author }}</a>
+                    </h4>
+                    <blockquote ng-repeat="snippet in result.snippet">
+                        ... <span ng-bind-html-unsafe="snippet">{{ snippet }}</span> ...
+                        <small><cite>{{ result.source }}</cite>;  {{ result.published | date:'mediumDate' }} {{ result.published | date:'shortTime' }}</small>
+                    </blockquote>
+                </li>
+            </ul>
+        </div>
+        <div class="col-lg-4">
+            <legend ng-show="sources">Viri</legend>
+            <p ng-repeat="source in sources">
+                {{ source[0] }} ({{ source[1] }})
+            </p>
+            <legend ng-show="publish_dates">Datumi</legend>
+            <p ng-repeat="publish_date in publish_dates">
+                {{ publish_date[0] | date:'mediumDate' }} ({{ publish_date[1] }})
+            </p> 
+        </div>
+    </div>
     </div>
     <!-- JavaScript plugins (requires jQuery) -->
     <script src="http://code.jquery.com/jquery.js"></script>
