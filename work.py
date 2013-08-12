@@ -27,16 +27,17 @@ def dispatch_to_solr(news):
     print "Dispatch done."
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG)
     
     if settings.SENTRY_CONNECTION_STRING is not None:
         from raven import Client
         from raven.handlers.logging import SentryHandler
         from raven.conf import setup_logging
+        logging.basicConfig(level=logging.WARN)
         client = Client(settings.SENTRY_CONNECTION_STRING)
         handler = SentryHandler(client)
         setup_logging(handler)
-
+    else:
+        logging.basicConfig(level=logging.DEBUG)
 
     try:
         existing_ids = db.news.get_latest_ids(2000)
