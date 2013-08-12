@@ -1,13 +1,37 @@
-function SearchResultsController($scope, $http) {
+var newsBuddy = angular.module('NewsBuddy', ['infinite-scroll']);
+
+newsBuddy.controller('SearchResultsController', function($scope, $http) {
+
+    $scope.offset = 0;
+    $scope.all_loaded = false;
 
     $scope.search = function() {
-        $scope.loading = true;
-        $scope.results = null; 
+        $scope.offset = 0;
+        $scope.results = []; 
         $scope.sources = null;
         $scope.publish_dates = null;
+        $scope.all_loaded = false;
+        $scope.loadPage();
+    }
 
-        $http.get('/news/query/?q=' + $scope.query).success(function data(data) {
-            $scope.results = data["results"];
+    $scope.loadPage = function()
+    {
+        console.info($scope)
+        if ($scope.loading)
+            return;
+
+        if (!$scope.query)
+            return;
+
+        $scope.loading = true;
+        $http.get('/news/query/?offset=' + $scope.offset + '&q=' + $scope.query).success(function data(data) {
+            if (data["results"].length == 0) {
+                $scope.loading = false;
+                $scope.all_loaded = true;
+                return;
+            }
+
+            $scope.results.push.apply($scope.results, data["results"]);
 
             if (data["facets"]["source"] != null) {
                 $scope.sources = data["facets"]["source"];
@@ -29,7 +53,10 @@ function SearchResultsController($scope, $http) {
                         return 0;
                 });
             }
+
             $scope.loading = false;
+            $scope.offset += data["results"].length;
         });
+
     }
-}
+});

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="sl" ng-app>
+<html lang="sl" ng-app="NewsBuddy">
   <head>
     <meta charset="UTF-8">
     <title>Novičar</title>
@@ -25,12 +25,8 @@
     </form>
 
     <br />
-    <div class="progress progress-striped active" ng-show="loading">
-        <div class="progress-bar" style="width: 100%"></div>
-    </div>
-
     <div class="row">
-        <div class="col-lg-8">
+        <div class="col-lg-8" infinite-scroll="loadPage();" infinite-scroll-disabled="loading || all_loaded" infinite-scroll-distance="1">
             <ul>
                 <li class="list-unstyled" ng-repeat="result in results">
                     <h4>
@@ -42,6 +38,11 @@
                     </blockquote>
                 </li>
             </ul>
+
+            <div class="progress progress-striped active" ng-show="loading">
+                <div class="progress-bar" style="width: 100%"></div>
+            </div>
+
         </div>
         <div class="col-lg-4">
             <legend ng-show="sources">Viri</legend>
@@ -61,6 +62,7 @@
     <script src="js/bootstrap.min.js"></script>
     <script src="js/angular.min.js"></script>
     <script src="js/angular-locale_sl-si.js"></script>
+    <script src="js/ng-infinite-scroll.min.js"></script>
     <script src="js/controller.js"></script>
   </body>
 </html>

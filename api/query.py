@@ -15,7 +15,7 @@ def get_news(request):
 
     start_index = 0
     if "offset" in request.GET:
-        start_index = int(request.GET["index"])
+        start_index = int(request.GET["offset"])
 
     solr_int = solr.Solr(settings.SOLR_ENDPOINT_URLS, settings.SOLR_DEFAULT_ENDPOINT)
     results = solr_int.query(request.GET["q"], sort=["published desc"], start=start_index, rows=PAGE_SIZE)
