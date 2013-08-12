@@ -14,8 +14,8 @@ def get_news(request):
         return { "error" : "Missing q query parameter." }
 
     start_index = 0
-    if "page" in request.GET:
-        start_index = int(request.GET["page"]) * PAGE_SIZE 
+    if "offset" in request.GET:
+        start_index = int(request.GET["index"])
 
     solr_int = solr.Solr(settings.SOLR_ENDPOINT_URLS, settings.SOLR_DEFAULT_ENDPOINT)
     results = solr_int.query(request.GET["q"], sort=["published desc"], start=start_index, rows=PAGE_SIZE)
@@ -55,9 +55,6 @@ def get_news(request):
             r["facets"]["source"] = results.facets["source"]
 
     # Calculate pagination information
-    current_page = results.start_index / PAGE_SIZE
-    total_pages = int(math.ceil(results.results_count / float(PAGE_SIZE)))
-
-    r["pagination"] = { "current" : current_page, "total" : total_pages, "results" : results.results_count }
-
+    r["offset"] = start_index
+    r["total"] = results.results_count 
     return r
