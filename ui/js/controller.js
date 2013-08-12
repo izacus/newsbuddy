@@ -25,12 +25,6 @@ newsBuddy.controller('SearchResultsController', function($scope, $http) {
 
         $scope.loading = true;
         $http.get('/news/query/?offset=' + $scope.offset + '&q=' + $scope.query).success(function data(data) {
-            if (data["results"].length == 0) {
-                $scope.loading = false;
-                $scope.all_loaded = true;
-                return;
-            }
-
             $scope.results.push.apply($scope.results, data["results"]);
 
             if (data["facets"]["source"] != null) {
@@ -56,6 +50,8 @@ newsBuddy.controller('SearchResultsController', function($scope, $http) {
 
             $scope.loading = false;
             $scope.offset += data["results"].length;
+            if ($scope.offset >= data["total"])
+                $scope.all_loaded = true;
         });
 
     }
