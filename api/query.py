@@ -34,5 +34,14 @@ def get_news(request):
             document["snippet"] = results.highlights[doc["id"]][u"content"]
 
         documents.append(document)
+    
+    r = { "results" : documents }
 
-    return { "results" : documents}
+    if results.facets is not None:
+        r["facets"] = {}
+        if "published" in results.facets:
+            r["facets"]["published"] = results.facets["published"]
+        if "source" in results.facets:
+            r["facets"]["source"] = results.facets["source"]
+
+    return r
