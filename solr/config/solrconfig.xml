@@ -50,7 +50,16 @@
       <str name="hl.fl">title,content</str>
       <str name="f.title.hl.fragsize">0</str>
       <str name="fl">id,title,published,source,source_url,content</str>
-    </lst>
+      <str name="facet">true</str>
+      <str name="facet.field">source</str>
+      <str name="facet.field">author</str>
+      <str name="facet.mincount">1</str>
+      <str name="facet.range">published</str>
+      <str name="facet.range.start">NOW/MONTHS-1MONTH</str>
+      <str name="facet.range.end">NOW</str>
+      <str name="facet.range.gap">+1DAY</str>
+      <str name="facet.range.other">before</str>
+  </lst>
 
   </requestHandler>
 
