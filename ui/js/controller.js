@@ -3,6 +3,9 @@ function SearchResultsController($scope, $http) {
     $scope.search = function() {
         $scope.loading = true;
         $scope.results = null; 
+        $scope.sources = null;
+        $scope.publish_dates = null;
+
         $http.get('/news/query/?q=' + $scope.query).success(function data(data) {
             $scope.results = data["results"];
 
@@ -13,8 +16,6 @@ function SearchResultsController($scope, $http) {
                     return b[1] - a[1];
                 });
             }
-            else
-                $scope.sources = null;
             
             if (data["facets"]["published"] != null) {
                 $scope.publish_dates = data["facets"]["published"]
@@ -28,9 +29,6 @@ function SearchResultsController($scope, $http) {
                         return 0;
                 });
             }
-            else
-                $scope.publish_dates = null;
-
             $scope.loading = false;
         });
     }
