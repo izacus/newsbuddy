@@ -4,8 +4,10 @@ import hashlib
 import pytz
 import requests
 
+requests_session = requests.Session()
+
 def get_article(url):
-    response = requests.get(url)
+    response = requests_session.get(url)
     return response.text
 
 def get_hash(link):
