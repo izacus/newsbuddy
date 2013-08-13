@@ -39,8 +39,12 @@ class ZurnalScraper(object):
         article = bs4.BeautifulSoup(article_html)
         result["title"] = article.body.article.hgroup.h1.text
         author = article.body.article.find(id="meta_el").find(class_="left").text
-        author = author[:author.index('/')].strip() 
-        result["author"] = author
+        
+        try:
+            author = author[:author.index('/')].strip() 
+            result["author"] = author
+        except ValueError as e:
+            result["author"] = None 
 
         content_div = article.find_all("div", class_="entry")
         result["text"] = content_div[0].text
