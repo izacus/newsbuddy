@@ -58,4 +58,6 @@ class MladinaScraper(object):
         content_items = main_part.findAll(attrs={'class' : None})
         content = ' '.join([item.text.strip() for item in content_items])
         result["text"] = content
+
+        print result
         return result
