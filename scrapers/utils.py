@@ -8,9 +8,6 @@ requests_session = requests.Session()
 
 def get_article(url):
     response = requests_session.get(url)
-
-    print "Encoding: " + response.encoding + " apparent: " + response.apparent_encoding
-
     response.encoding = response.apparent_encoding
     return response.text
 

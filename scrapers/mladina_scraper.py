@@ -59,5 +59,4 @@ class MladinaScraper(object):
         content = ' '.join([item.text.strip() for item in content_items])
         result["text"] = content
 
-        print result
         return result
