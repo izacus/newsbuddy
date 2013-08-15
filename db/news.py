@@ -20,20 +20,19 @@ class NewsItem(Base):
 def create_news_db(engine):
     Base.metadata.create_all(engine)
 
-def get_latest_ids(limit=500):
+def get_db_session():
     db_engine = create_engine(settings.DB_CONNECTION_STRING)
     create_news_db(db_engine)
     Session = sessionmaker(bind=db_engine)
-    db_sesion = Session()
+    return Session()
+
+def get_latest_ids(limit=500):
+    db_sesion = get_db_session()
     existsing_ids = set(id[0] for id in db_sesion.query(NewsItem.id).order_by(desc(NewsItem.published))[:100])
     return existsing_ids
 
 def store_news(news):
-    # Attempt to create database if it doesn't exist
-    db_engine = create_engine(settings.DB_CONNECTION_STRING)
-    Session = sessionmaker(bind=db_engine)
-
-    db_session = Session()
+    db_session = get_db_session()
     ids = [news_item["id"] for news_item in news]
     existing_ids = set(id[0] for id in db_session.query(NewsItem.id).filter(NewsItem.id.in_(ids)).all())
 
@@ -54,7 +53,5 @@ def store_news(news):
     print "Added ", count,  " new items."
 
 def get_news():
-    db_engine = create_engine(settings.DB_CONNECTION_STRING)
-    Session = sessionmaker(bind=db_engine)
-    db_session = Session()
+    db_session = get_db_session()
     return db_session.query(NewsItem).yield_per(50)
