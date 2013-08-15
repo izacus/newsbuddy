@@ -1,6 +1,6 @@
 var newsBuddy = angular.module('NewsBuddy', ['infinite-scroll']);
 
-newsBuddy.controller('SearchResultsController', function($scope, $http) {
+newsBuddy.controller('SearchController', function($scope, $http) {
 
     $scope.offset = 0;
     $scope.all_loaded = false;
