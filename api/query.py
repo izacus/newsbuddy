@@ -1,6 +1,5 @@
 from cornice import Service
 import settings
-import math
 from pysolarized import solr
 from pysolarized import from_solr_date
 
