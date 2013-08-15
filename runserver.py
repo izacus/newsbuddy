@@ -1,8 +1,10 @@
+import logging
 from wsgiref.simple_server import make_server
 import api
 from pyramid.config import Configurator
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.DEBUG)
     config = Configurator()
     config.include('cornice')
     api.register(config)
