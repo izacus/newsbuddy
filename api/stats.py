@@ -40,3 +40,4 @@ def get_stats(request):
 def delete_stats(request):
     global stats
     stats = None
+    return None

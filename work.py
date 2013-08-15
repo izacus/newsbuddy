@@ -1,4 +1,5 @@
 import logging
+import requests
 import scrapers
 import settings
 import db.news
@@ -43,9 +44,8 @@ if __name__ == "__main__":
         existing_ids = db.news.get_latest_ids(2000)
         news = scrapers.scrape_news(existing_ids)
         db.news.store_news(news)
-
         if settings.SOLR_ENDPOINT_URLS is not None:
             dispatch_to_solr(news)
-
+        requests.delete(settings.LOCAL_URL + "/news/stats/")
     except Exception as e:
         logger.error("Failed to process work packet!", exc_info=True)
