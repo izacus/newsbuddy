@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="NewsBuddy">
 <head>
     <meta charset="UTF-8">
     <title>Novičar - statistika</title>
@@ -9,7 +9,7 @@
     <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
     <link href="css/ui.css" rel="stylesheet" media="screen">
 </head>
-<body>
+<body ng-controller="StatsController">
     <div class="navbar navbar-inverse" role="navigation">
         <a class="navbar-brand" href="index.html">Novičar</a>
         <ul class="nav navbar-nav">
@@ -20,9 +20,9 @@
 
     <div class="container">
         <div class="row">
-            <div class="col-md-4">Juhu</div>
-            <div class="col-md-4">mmm</div>
-            <div class="col-md-4">Jehe</div>
+            <div class="col-lg-4"><div class="well text-center"><h3>Vseh novic: <br/> {{ stats.total_news }} </h3></div></div>
+            <div class="col-lg-4">&nbsp;</div>
+            <div class="col-lg-4"><div class="well text-center"><h3>Novic danes: <br/> {{ stats.news_today }}</h3></div></div>
         </div>
     </div>
 
@@ -31,5 +31,6 @@
     <script src="js/bootstrap.min.js"></script>
     <script src="js/angular.min.js"></script>
     <script src="js/angular-locale_sl-si.js"></script>
+    <script src="js/stats_controller.js"></script>
 </body>
 </html>
