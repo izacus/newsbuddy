@@ -7,7 +7,7 @@ logger = logging.getLogger("scraper.24ur")
 
 class TwentyFourHrsScraper(object):
 
-    TFH_RSS_URL = "http://www.24ur.com/rss/"
+    TFH_RSS_URL = "http://rss.24ur.com/"
 
     def get_news(self, existing_ids=None):
         news = []
