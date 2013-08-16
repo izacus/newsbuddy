@@ -21,9 +21,11 @@ class ZurnalScraper(object):
                 continue
 
             article_id = link[link.rfind("-") + 1:]
-            article = self.get_article_text(article_id)
 
-            if article is None:
+            try:
+                article = self.get_article_text(article_id)
+            except Exception as e:
+                logger.warn("Failed to parse article id %s", article_id, exc_info=True)
                 continue
 
             published_date = time_to_datetime(feed_entry["published_parsed"])
@@ -41,10 +43,7 @@ class ZurnalScraper(object):
         article_html = get_article(self.ZURNAL_PRINT_URL + str(article_id))
         result = {}
         article = bs4.BeautifulSoup(article_html)
-
         article = article.body.find("article")
-        if article is None:
-            return None
 
         result["title"] = article.hgroup.h1.text
         author = article.find(id="meta_el").find(class_="left").text

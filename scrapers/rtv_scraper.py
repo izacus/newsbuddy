@@ -25,7 +25,13 @@ class RTVScraper(object):
                     continue
 
                 article_id = link[link.rfind("/") + 1:]
-                news_item = self.get_article_text(article_id)
+
+                try:
+                    news_item = self.get_article_text(article_id)
+                except Exception as e:
+                    logger.warn("Failed to parse article ID %s", article_id, exc_info=True)
+                    continue
+
                 published_date = time_to_datetime(feed_entry["published_parsed"])
                 news_item["published"] = published_date
                 news_item["source"] = "RTVSlo"

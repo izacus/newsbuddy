@@ -18,7 +18,12 @@ class DeloScraper(object):
                 logger.debug("Skipping %s", link)
                 continue
 
-            article = self.get_article_text(link)
+            try:
+                article = self.get_article_text(link)
+            except Exception as e:
+                logger.warn("Failed to parse article %s", link, exc_info=True)
+                continue
+
             if article is None: continue
             published_date = time_to_datetime(feed_entry["published_parsed"])
             article["published"] = published_date
