@@ -16,5 +16,10 @@ def get_hash(link):
     hash.update(link)
     return hash.hexdigest()
 
+def get_sha_hash(link):
+    hash = hashlib.sha512()
+    hash.update(link)
+    return hash.hexdigest()
+
 def time_to_datetime(time):
     return datetime.fromtimestamp(calendar.timegm(time), tz=pytz.utc)

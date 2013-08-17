@@ -108,7 +108,7 @@ newsBuddy.controller('SearchController', function($scope, $http) {
         sortArrayByDate(results_array);
 
 
-        
+
         $scope.results_array = results_array;
     };
 });
