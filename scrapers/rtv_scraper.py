@@ -1,6 +1,6 @@
 import bs4
 import feedparser
-from scrapers.utils import get_article, get_hash, time_to_datetime
+from scrapers.utils import get_article, get_hash, time_to_datetime, get_sha_hash
 import logging
 
 logger = logging.getLogger("scraper.rtvslo")
@@ -20,7 +20,7 @@ class RTVScraper(object):
                 # Download article
                 link = feed_entry["link"]
 
-                if existing_ids and get_hash(link) in existing_ids:
+                if existing_ids and (get_hash(link) in existing_ids or get_sha_hash(link) in existing_ids):
                     logger.debug("Skipping %s", link)
                     continue
 
@@ -38,7 +38,7 @@ class RTVScraper(object):
                 news_item["source_url"] = link
                 news_item["language"] = "si"
                 news_item["author"] = None
-                news_item["id"] = get_hash(link)
+                news_item["id"] = get_sha_hash(link)
                 news.append(news_item)
         return news
 

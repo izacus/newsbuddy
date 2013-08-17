@@ -1,7 +1,7 @@
 import logging
 import bs4
 import feedparser
-from scrapers.utils import time_to_datetime, get_hash, get_article
+from scrapers.utils import time_to_datetime, get_hash, get_article, get_sha_hash
 
 logger = logging.getLogger("scraper.24ur")
 
@@ -15,7 +15,7 @@ class TwentyFourHrsScraper(object):
         for feed_entry in feed_content.entries:
             link = feed_entry["link"]
 
-            if existing_ids and get_hash(link) in existing_ids:
+            if existing_ids and (get_hash(link) in existing_ids or get_sha_hash(link) in existing_ids):
                 logger.debug("Skipping %s", link)
                 continue
 
@@ -32,7 +32,7 @@ class TwentyFourHrsScraper(object):
             article["source_url"] = link
             article["language"] = "si"
             # Generate ID from link
-            article["id"] = get_hash(link)
+            article["id"] = get_sha_hash(link)
             news.append(article)
         return news
 

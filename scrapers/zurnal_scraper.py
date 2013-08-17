@@ -1,6 +1,6 @@
 import bs4
 import feedparser
-from scrapers.utils import get_article, get_hash, time_to_datetime
+from scrapers.utils import get_article, get_hash, time_to_datetime, get_sha_hash
 import logging
 
 logger = logging.getLogger("scraper.zurnal")
@@ -16,7 +16,7 @@ class ZurnalScraper(object):
         for feed_entry in feed_content.entries:
             link = feed_entry["link"]
 
-            if existing_ids and get_hash(link) in existing_ids:
+            if existing_ids and (get_hash(link) in existing_ids or get_sha_hash(link) in existing_ids):
                 logger.debug("Skipping %s", link)
                 continue
 
@@ -34,7 +34,7 @@ class ZurnalScraper(object):
             article["source_url"] = link
             article["language"] = "si"
             # Generate ID from link
-            article["id"] = get_hash(link)
+            article["id"] = get_sha_hash(link)
             news.append(article)
         return news
 
