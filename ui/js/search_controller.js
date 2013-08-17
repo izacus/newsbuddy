@@ -5,6 +5,7 @@ newsBuddy.controller('SearchController', function($scope, $http) {
     $scope.offset = 0;
     $scope.all_loaded = false;
     $scope.results_array = [];
+    $scope.query = null;
 
     $scope.search = function() {
         $scope.offset = 0;
@@ -18,7 +19,6 @@ newsBuddy.controller('SearchController', function($scope, $http) {
 
     $scope.loadPage = function()
     {
-        console.info($scope)
         if ($scope.loading)
             return;
 
@@ -27,8 +27,8 @@ newsBuddy.controller('SearchController', function($scope, $http) {
 
         $scope.loading = true;
         $http.get('/news/query/?offset=' + $scope.offset + '&q=' + $scope.query).success(function data(data) {
-            $scope.applyResults(data["results"]);
-            //$scope.results.push.apply($scope.results, data["results"]);
+            console.time("Results");
+            applyResults(data["results"]);
 
             if (data["facets"]["source"] != null) {
                 $scope.sources = data["facets"]["source"];
@@ -55,14 +55,24 @@ newsBuddy.controller('SearchController', function($scope, $http) {
             $scope.offset += data["results"].length;
             if ($scope.offset >= data["total"])
                 $scope.all_loaded = true;
+
+            console.timeEnd("Results");
         });
     };
 
-    $scope.applyResults = function(results) {
+    var sortArrayByDate = function(array) {
+        array.sort(function (a, b) {
+           if (a.published < b.published)  return 1;
+           if (a.published > b.published)  return -1;
+           return 0;
+        });
+    };
+
+    var applyResults = function(results) {
         // Group results by day
         var results_dict = {}
 
-        $scope.sortArrayByDate(results);
+        sortArrayByDate(results);
 
         for (var i = 0; i < results.length; i++) {
             var d = new Date(Date.parse(results[i].published));
@@ -82,7 +92,7 @@ newsBuddy.controller('SearchController', function($scope, $http) {
             // If the key exists, merge it
             if (date in $scope.results) {
                 $scope.results[date] = $scope.results[date].concat(results_dict[date]);
-                $scope.sortArrayByDate($scope.results[date]);
+                sortArrayByDate($scope.results[date]);
             }
             else {
                 $scope.results[date] = results_dict[date];
@@ -95,15 +105,10 @@ newsBuddy.controller('SearchController', function($scope, $http) {
             results_array.push({ 'published': key, 'articles' : $scope.results[key]});
         }
 
-        $scope.sortArrayByDate(results_array);
-        $scope.results_array = results_array;
-    };
+        sortArrayByDate(results_array);
 
-    $scope.sortArrayByDate = function(array) {
-        array.sort(function (a, b) {
-           if (a.published < b.published)  return 1;
-           if (a.published > b.published)  return -1;
-           return 0;
-        });
+
+        
+        $scope.results_array = results_array;
     };
 });
