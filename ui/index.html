@@ -31,7 +31,7 @@
     <br />
     <div class="row">
         <div class="col-lg-8" infinite-scroll="loadPage();" infinite-scroll-disabled="loading || all_loaded" infinite-scroll-distance="1">
-            <div ng-repeat="result_group in results_array">
+            <div ng-repeat="result_group in results_array" ng-show="results_array">
                 <h3 class="text-center">{{ result_group.published | date:'mediumDate' }}</h3>
                 <hr>
                 <ul>
@@ -49,7 +49,9 @@
             <div class="progress progress-striped active" ng-show="loading">
                 <div class="progress-bar" style="width: 100%"></div>
             </div>
-
+        </div>
+        <div class="row text-center" ng-hide="loading || results_array" id="no-results">
+            <h3>Ni bilo najdenih rezultatov.</h3>
         </div>
         <div class="col-lg-4">
             <legend ng-show="sources">Viri</legend>

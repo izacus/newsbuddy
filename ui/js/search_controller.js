@@ -1,7 +1,10 @@
 var newsBuddy = angular.module('NewsBuddy', ['infinite-scroll']);
 
-newsBuddy.controller('SearchController', function($scope, $http) {
+$(document).ready(function () {
+   $('#no-results').hide();
+});
 
+newsBuddy.controller('SearchController', function($scope, $http) {
     $scope.offset = 0;
     $scope.all_loaded = false;
     $scope.results_array = [];
@@ -27,7 +30,12 @@ newsBuddy.controller('SearchController', function($scope, $http) {
 
         $scope.loading = true;
         $http.get('/news/query/?offset=' + $scope.offset + '&q=' + $scope.query).success(function data(data) {
-            console.time("Results");
+
+            if (!data["results"]) {
+                $scope.loading = false;
+                return;
+            }
+
             applyResults(data["results"]);
 
             if (data["facets"]["source"] != null) {
@@ -55,8 +63,6 @@ newsBuddy.controller('SearchController', function($scope, $http) {
             $scope.offset += data["results"].length;
             if ($scope.offset >= data["total"])
                 $scope.all_loaded = true;
-
-            console.timeEnd("Results");
         });
     };
 
@@ -106,9 +112,6 @@ newsBuddy.controller('SearchController', function($scope, $http) {
         }
 
         sortArrayByDate(results_array);
-
-
-
         $scope.results_array = results_array;
     };
 });
