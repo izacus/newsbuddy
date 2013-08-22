@@ -27,6 +27,11 @@ def get_stats(request):
                 stats["total_by_source"][item[0]] = item[1]
 
             midnight_today = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+            news_by_source_today = db_session.query(NewsItem.source, func.count(NewsItem.id)).filter(NewsItem.published > midnight_today).group_by(NewsItem.source).all()
+            stats["total_by_source_today"] = {}
+            for item in news_by_source_today:
+                stats["total_by_source_today"][item[0]] = item[1]
+
             news_today = db_session.query(func.count(NewsItem.id)).filter(NewsItem.published > midnight_today).scalar()
             stats["news_today"] = news_today
 
