@@ -4,20 +4,34 @@ from pysolarized import solr
 from pysolarized import from_solr_date
 
 news_query = Service(name="news_query", path="/news/query/", description="Returns news matching the query")
+latest = Service(name="latest_news", path="/news/latest/", description="Returns latest collected news")
 
 PAGE_SIZE = 30
+
+
+@latest.get()
+def get_latest(request):
+    results = query_for("*")
+    # Hide facets and fix count
+    del results["facets"]
+    del results["offset"]
+    results["total"] = len(results["results"])
+    return results
+
 
 @news_query.get()
 def get_news(request):
     if "q" not in request.GET:
-        return { "error" : "Missing q query parameter." }
-
+        return {"error": "Missing q query parameter."}
     start_index = 0
     if "offset" in request.GET:
         start_index = int(request.GET["offset"])
+    return query_for(request.GET["q"], start_index)
 
+
+def query_for(query, start_index=0):
     solr_int = solr.Solr(settings.SOLR_ENDPOINT_URLS, settings.SOLR_DEFAULT_ENDPOINT)
-    results = solr_int.query(request.GET["q"], sort=["published desc"], start=start_index, rows=PAGE_SIZE)
+    results = solr_int.query(query, sort=["published desc"], start=start_index, rows=PAGE_SIZE)
 
     if results is None:
         return { "error" : "Failed to connect to news search server." }
