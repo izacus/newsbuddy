@@ -5,22 +5,29 @@ $(document).ready(function () {
 });
 
 newsBuddy.controller('SearchController', function($scope, $http) {
-    console.info($scope);
 
-    $scope.offset = 0;
-    $scope.all_loaded = false;
-    $scope.results_array = [];
-    $scope.query = null;
-
-    $scope.search = function() {
+    $scope.clearSearch = function() {
         $scope.offset = 0;
         $scope.results = {};
         $scope.results_array = [];      // Array to show results
         $scope.sources = null;
         $scope.publish_dates = null;
         $scope.all_loaded = false;
+    };
+
+    $scope.search = function() {
+        $scope.clearSearch();
         $scope.loadPage();
     };
+
+    $scope.loadLatestNews = function() {
+        $scope.loading = true;
+        $http.get('/news/latest/').success(function data(data) {
+            $scope.loading = false;
+            $scope.all_loaded = true;
+            applyResults(data["results"]);
+        });
+    }
 
     $scope.loadPage = function()
     {
@@ -129,4 +136,7 @@ newsBuddy.controller('SearchController', function($scope, $http) {
            return 0;
         });
     };
+
+    $scope.clearSearch();
+    $scope.loadLatestNews();
 });
