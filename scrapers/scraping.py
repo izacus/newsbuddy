@@ -2,6 +2,7 @@ import multiprocessing
 import itertools
 from scrapers.finance_parser import FinanceScraper
 from scrapers.mladina_scraper import MladinaScraper
+from scrapers.vecer_scraper import VecerScraper
 from tfhrs_scraper import TwentyFourHrsScraper
 from rtv_scraper import RTVScraper
 from scrapers.delo_scraper import DeloScraper
@@ -12,7 +13,7 @@ import logging
 logger = logging.getLogger("scraper")
 
 def scrape_news(existing_ids=None):
-    scrapers = [FinanceScraper(), MladinaScraper(), TwentyFourHrsScraper(), RTVScraper(), ZurnalScraper(), DeloScraper(), DnevnikScraper()]
+    scrapers = [VecerScraper(), FinanceScraper(), MladinaScraper(), TwentyFourHrsScraper(), RTVScraper(), ZurnalScraper(), DeloScraper(), DnevnikScraper()]
     print "Scraping news!"
 
     pool = multiprocessing.Pool(processes=len(scrapers))
