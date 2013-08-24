@@ -24,8 +24,10 @@ def get_news(request):
 
     documents = []
     for doc in results.documents:
-        document = { "published" : str(from_solr_date(doc["published"]).isoformat()) + "Z", "link":doc["source_url"],
-                "source" : doc["source"] }
+        document = {"id": doc["id"],
+                    "published": str(from_solr_date(doc["published"]).isoformat()) + "Z",
+                    "link": doc["source_url"],
+                    "source": doc["source"]}
 
         if "author" in doc and doc["author"] is not None:
             document["author"] = doc["author"]
@@ -40,7 +42,7 @@ def get_news(request):
 
         documents.append(document)
     
-    r = { "results" : documents }
+    r = {"results": documents}
 
     if results.facets is not None:
         r["facets"] = {}
