@@ -5,6 +5,8 @@ $(document).ready(function () {
 });
 
 newsBuddy.controller('SearchController', function($scope, $http) {
+    console.info($scope);
+
     $scope.offset = 0;
     $scope.all_loaded = false;
     $scope.results_array = [];
@@ -37,27 +39,7 @@ newsBuddy.controller('SearchController', function($scope, $http) {
             }
 
             applyResults(data["results"]);
-
-            if (data["facets"]["source"] != null) {
-                $scope.sources = data["facets"]["source"];
-                // Sort sources by number of hits descending
-                $scope.sources.sort(function (a, b) {
-                    return b[1] - a[1];
-                });
-            }
-            
-            if (data["facets"]["published"] != null) {
-                $scope.publish_dates = data["facets"]["published"]
-                // Sort publish dates by date descending as well
-                $scope.publish_dates.sort(function (a,b) {
-                    if (a[0] > b[0])
-                        return -1;
-                    else if (a[0] < b[0])
-                        return 1;
-                    else
-                        return 0;
-                });
-            }
+            renderFacets(data["facets"]);
 
             $scope.loading = false;
             $scope.offset += data["results"].length;
@@ -66,52 +48,85 @@ newsBuddy.controller('SearchController', function($scope, $http) {
         });
     };
 
+    /**
+     * Adds new results to result arrays and triggers rendering
+     * @param results
+     */
+    var applyResults = function(results) {
+        // Add results to result dictionary
+        sortArrayByDate(results);
+        for (var i = 0; i < results.length; i++) {
+            var date = isoDateToMidnight(results[i].published);
+            if (!(date in $scope.results))
+                $scope.results[date] = [];
+
+            $scope.results[date].push(results[i]);
+        }
+
+        // Now update results array. We need to make sure we only add items to appropriate part to prevent full re-render
+        for (var date in $scope.results)
+        {
+            // Find array item in result array
+            var item = $.grep($scope.results_array, function(i) { return i.published === date; });
+            if (item.length == 0) {
+                $scope.results_array.push({ 'published': date, 'articles': $scope.results[date]});
+            }
+            else {
+                // Merge subarrays if the subarray already exists
+                var article_array = item[0].articles.slice();
+                for (var i = 0; i < $scope.results[date].length; i++) {
+                    var result = $scope.results[date][i];
+                    if (!documentInArray(article_array, result.id))
+                        article_array.push(result);
+                }
+                item[0].articles = article_array;
+            }
+
+        }
+    };
+
+    var documentInArray = function(array, document_id) {
+        for (var i = 0; i < array.length; i++) {
+            if (array[i].id === document_id)
+                return true;
+        }
+        return false;
+    }
+
+    var isoDateToMidnight = function(date) {
+        var d = new Date(Date.parse(date));
+        d.setUTCHours(0);d.setUTCMinutes(0);d.setUTCSeconds(0);d.setUTCMilliseconds(0);
+        return d.toISOString();
+    }
+
+    var renderFacets = function(facets) {
+        if (facets["source"] != null) {
+                $scope.sources = facets["source"];
+                // Sort sources by number of hits descending
+                $scope.sources.sort(function (a, b) {
+                    return b[1] - a[1];
+                });
+            }
+
+        if (facets["published"] != null) {
+            $scope.publish_dates = facets["published"]
+            // Sort publish dates by date descending as well
+            $scope.publish_dates.sort(function (a,b) {
+                if (a[0] > b[0])
+                    return -1;
+                else if (a[0] < b[0])
+                    return 1;
+                else
+                    return 0;
+            });
+        }
+    }
+
     var sortArrayByDate = function(array) {
         array.sort(function (a, b) {
            if (a.published < b.published)  return 1;
            if (a.published > b.published)  return -1;
            return 0;
         });
-    };
-
-    var applyResults = function(results) {
-        // Group results by day
-        var results_dict = {}
-
-        sortArrayByDate(results);
-
-        for (var i = 0; i < results.length; i++) {
-            var d = new Date(Date.parse(results[i].published));
-            d.setUTCHours(0);d.setUTCMinutes(0);d.setUTCSeconds(0);d.setUTCMilliseconds(0);
-            var d_string = d.toISOString();
-            if (!(d_string in results_dict))
-                results_dict[d_string] = [];
-
-            results_dict[d_string].push(results[i]);
-        };
-
-
-        // Merge results
-        for (var date in results_dict) {
-            if (!results_dict.hasOwnProperty(date)) continue;
-
-            // If the key exists, merge it
-            if (date in $scope.results) {
-                $scope.results[date] = $scope.results[date].concat(results_dict[date]);
-                sortArrayByDate($scope.results[date]);
-            }
-            else {
-                $scope.results[date] = results_dict[date];
-            }
-        }
-
-        var results_array = [];
-        for (var key in $scope.results) {
-            if (!$scope.results.hasOwnProperty(key)) continue;
-            results_array.push({ 'published': key, 'articles' : $scope.results[key]});
-        }
-
-        sortArrayByDate(results_array);
-        $scope.results_array = results_array;
     };
 });
