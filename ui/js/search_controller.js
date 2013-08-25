@@ -30,7 +30,6 @@ newsBuddy.controller('SearchController', function($rootScope, $scope, $http, $lo
 
         $('#no-results').show();
         $scope.clearSearch();
-        $location.hash($scope.query);
         $scope.loadPage();
     };
 
@@ -56,8 +55,10 @@ newsBuddy.controller('SearchController', function($rootScope, $scope, $http, $lo
             }
         }
 
+        $location.hash($scope.query);
         $http.get(url).success(function data(data) {
-
+            console.info($scope.query);
+            $location.hash($scope.query);
             if (!data["results"]) {
                 $scope.loading = false;
                 return;
