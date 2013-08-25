@@ -26,12 +26,21 @@ def get_news(request):
     start_index = 0
     if "offset" in request.GET:
         start_index = int(request.GET["offset"])
-    return query_for(request.GET["q"], start_index)
+
+    filters = None
+    if "published" in request.GET or "source" in request.GET:
+        filters = {}
+        if "published" in request.GET:
+            filters["published"] = request.GET["published"]
+        if "source" in request.GET:
+            filters["source"] = request.GET["source"]
+
+    return query_for(request.GET["q"], start_index=start_index, filters=filters)
 
 
-def query_for(query, start_index=0):
+def query_for(query, start_index=0, filters=None):
     solr_int = solr.Solr(settings.SOLR_ENDPOINT_URLS, settings.SOLR_DEFAULT_ENDPOINT)
-    results = solr_int.query(query, sort=["published desc"], start=start_index, rows=PAGE_SIZE)
+    results = solr_int.query(query, sort=["published desc"], start=start_index, rows=PAGE_SIZE, filters=filters)
 
     if results is None:
         return { "error" : "Failed to connect to news search server." }
