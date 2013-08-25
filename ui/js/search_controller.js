@@ -74,9 +74,20 @@ newsBuddy.controller('SearchController', function($scope, $http, $location) {
         });
     };
 
+    /**
+     * Adds a filter to list and restarts query
+     * @param field
+     * @param value
+     */
     $scope.filter = function(field, value) {
         $scope.clearSearch();
-        $scope.search_filters[field] = value;
+        if (value === null) {
+            delete $scope.search_filters[field];
+        }
+        else {
+            $scope.search_filters[field] = value;
+        }
+
         $scope.loadPage();
     };
 

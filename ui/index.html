@@ -52,13 +52,19 @@
             <h3>Ni bilo najdenih rezultatov.</h3>
         </div>
         <div class="col-lg-4">
-            <legend ng-show="sources">Viri</legend>
+            <legend ng-show="sources">
+                Viri
+                <a href="#" class="glyphicon glyphicon-remove pull-right" ng-show="search_filters.source" ng-click="filter('source', null)"></a>
+            </legend>
             <p data-ng-repeat="source in sources">
-                <a ng-click="filter('source', source[0])">{{ source[0] }}</a> ({{ source[1] }})
+                <a href="#" ng-click="filter('source', source[0])">{{ source[0] }}</a> ({{ source[1] }})
             </p>
-            <legend ng-show="publish_dates">Datumi</legend>
+            <legend ng-show="publish_dates">
+                Datumi
+                <a href="#" class="glyphicon glyphicon-remove pull-right" ng-show="search_filters.published" ng-click="filter('published', null)"></a>
+            </legend>
             <p data-ng-repeat="publish_date in publish_dates">
-                <a ng-click="filter('published', publish_date[0])">{{ publish_date[0] | date:'mediumDate' }}</a> ({{ publish_date[1] }})
+                <a href="#" ng-click="filter('published', publish_date[0])">{{ publish_date[0] | date:'mediumDate' }}</a> ({{ publish_date[1] }})
             </p> 
         </div>
     </div>
