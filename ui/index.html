@@ -31,16 +31,16 @@
     <br />
     <div class="row">
         <div class="col-lg-8" infinite-scroll="loadPage();" infinite-scroll-disabled="loading || all_loaded" infinite-scroll-distance="2">
-            <div ng-repeat="result_group in results_array" ng-show="results_array">
+            <div data-ng-repeat="result_group in results_array" ng-show="results_array">
                 <h3 class="text-center">{{ result_group.published | date:'mediumDate' }}</h3>
                 <hr>
                 <ul>
-                    <li class="list-unstyled" ng-repeat="result in result_group.articles">
+                    <li class="list-unstyled" data-ng-repeat="result in result_group.articles">
                         <h5>
                             <a href="{{result.link}}"><span ng-bind-html="result.title"></span> {{ result.author }}</a> <br/>
                             <small>{{ result.source }};  {{ result.published | date:'mediumDate' }} {{ result.published | date:'shortTime' }}</small>
                         </h5>
-                        <p ng-repeat="snippet in result.snippet">... <span ng-bind-html="snippet"></span> ...</p>
+                        <p data-ng-repeat="snippet in result.snippet">... <span ng-bind-html="snippet"></span> ...</p>
                     </li>
                 </ul>
             </div>
@@ -53,11 +53,11 @@
         </div>
         <div class="col-lg-4">
             <legend ng-show="sources">Viri</legend>
-            <p ng-repeat="source in sources">
+            <p data-ng-repeat="source in sources">
                 {{ source[0] }} ({{ source[1] }})
             </p>
             <legend ng-show="publish_dates">Datumi</legend>
-            <p ng-repeat="publish_date in publish_dates">
+            <p data-ng-repeat="publish_date in publish_dates">
                 {{ publish_date[0] | date:'mediumDate' }} ({{ publish_date[1] }})
             </p> 
         </div>

@@ -68,8 +68,6 @@ newsBuddy.controller('SearchController', function($scope, $http) {
                 $scope.results[date] = [];
 
             $scope.results[date].push(results[i]);
-
-            console.info(results[i].title);
         }
 
         // Now update results array. We need to make sure we only add items to appropriate part to prevent full re-render
@@ -139,6 +137,7 @@ newsBuddy.controller('SearchController', function($scope, $http) {
         });
     };
 
+    //$locationProvider.html5Mode(true).hashPrefix('!');
     $scope.clearSearch();
     $scope.loadLatestNews();
 });
