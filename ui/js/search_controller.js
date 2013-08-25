@@ -13,6 +13,12 @@ newsBuddy.controller('SearchController', function($scope, $http, $location) {
     $scope.clearSearch = function() {
         $scope.offset = 0;
         $scope.results = {};
+
+        // Clear filters only if there's a new query
+        if ($scope["old_query"] == undefined || $scope.old_query != $scope.query)
+            $scope.search_filters = {};
+
+        $scope.old_query = $scope.query;
         $scope.results_array = [];      // Array to show results
         $scope.sources = null;
         $scope.publish_dates = null;
@@ -44,7 +50,14 @@ newsBuddy.controller('SearchController', function($scope, $http, $location) {
             return;
 
         $scope.loading = true;
-        $http.get('/news/query/?offset=' + $scope.offset + '&q=' + $scope.query).success(function data(data) {
+        var url = '/news/query/?offset=' + $scope.offset + '&q=' + $scope.query;
+        for (var filter in $scope.search_filters) {
+            if ($scope.search_filters.hasOwnProperty(filter)) {
+                url += "&" + filter + "=" + encodeURIComponent($scope.search_filters[filter]);
+            }
+        }
+
+        $http.get(url).success(function data(data) {
 
             if (!data["results"]) {
                 $scope.loading = false;
@@ -59,6 +72,12 @@ newsBuddy.controller('SearchController', function($scope, $http, $location) {
             if ($scope.offset >= data["total"])
                 $scope.all_loaded = true;
         });
+    };
+
+    $scope.filter = function(field, value) {
+        $scope.clearSearch();
+        $scope.search_filters[field] = value;
+        $scope.loadPage();
     };
 
     /**

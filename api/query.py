@@ -31,11 +31,12 @@ def get_news(request):
     if u"published" in request.GET or u"source" in request.GET:
         filters = {}
         if u"published" in request.GET:
-            filters[u"published"] = request.GET[u"published"]
+            filters[u"published"] = "[" + request.GET[u"published"] + " TO " + request.GET[u"published"] + "+1DAYS]"
         if u"source" in request.GET:
             filters[u"source"] = request.GET[u"source"]
 
-    return query_for(request.GET["q"], start_index=start_index, filters=filters)
+    print request.GET
+    return query_for(request.GET[u"q"], start_index=start_index, filters=filters)
 
 
 def query_for(query, start_index=0, filters=None):

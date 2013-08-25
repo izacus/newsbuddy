@@ -54,11 +54,11 @@
         <div class="col-lg-4">
             <legend ng-show="sources">Viri</legend>
             <p data-ng-repeat="source in sources">
-                {{ source[0] }} ({{ source[1] }})
+                <a ng-click="filter('source', source[0])">{{ source[0] }}</a> ({{ source[1] }})
             </p>
             <legend ng-show="publish_dates">Datumi</legend>
             <p data-ng-repeat="publish_date in publish_dates">
-                {{ publish_date[0] | date:'mediumDate' }} ({{ publish_date[1] }})
+                <a ng-click="filter('published', publish_date[0])">{{ publish_date[0] | date:'mediumDate' }}</a> ({{ publish_date[1] }})
             </p> 
         </div>
     </div>
