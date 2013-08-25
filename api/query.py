@@ -13,27 +13,27 @@ PAGE_SIZE = 30
 def get_latest(request):
     results = query_for("*")
     # Hide facets and fix count
-    del results["facets"]
-    del results["offset"]
-    results["total"] = len(results["results"])
+    del results[u"facets"]
+    del results[u"offset"]
+    results[u"total"] = len(results[u"results"])
     return results
 
 
 @news_query.get()
 def get_news(request):
-    if "q" not in request.GET:
-        return {"error": "Missing q query parameter."}
+    if u"q" not in request.GET:
+        return {u"error": u"Missing q query parameter."}
     start_index = 0
-    if "offset" in request.GET:
-        start_index = int(request.GET["offset"])
+    if u"offset" in request.GET:
+        start_index = int(request.GET[u"offset"])
 
     filters = None
-    if "published" in request.GET or "source" in request.GET:
+    if u"published" in request.GET or u"source" in request.GET:
         filters = {}
-        if "published" in request.GET:
-            filters["published"] = request.GET["published"]
-        if "source" in request.GET:
-            filters["source"] = request.GET["source"]
+        if u"published" in request.GET:
+            filters[u"published"] = request.GET[u"published"]
+        if u"source" in request.GET:
+            filters[u"source"] = request.GET[u"source"]
 
     return query_for(request.GET["q"], start_index=start_index, filters=filters)
 
@@ -43,42 +43,42 @@ def query_for(query, start_index=0, filters=None):
     results = solr_int.query(query, sort=["published desc"], start=start_index, rows=PAGE_SIZE, filters=filters)
 
     if results is None:
-        return { "error" : "Failed to connect to news search server." }
+        return {u"error": u"Failed to connect to news search server."}
 
     documents = []
     for doc in results.documents:
-        document = {"id": doc["id"],
-                    "published": str(from_solr_date(doc["published"]).isoformat()) + "Z",
-                    "link": doc["source_url"],
-                    "source": doc["source"]}
+        document = {u"id": doc["id"],
+                    u"published": str(from_solr_date(doc["published"]).isoformat()) + "Z",
+                    u"link": doc["source_url"],
+                    u"source": doc["source"]}
 
-        if "author" in doc and doc["author"] is not None:
-            document["author"] = doc["author"]
+        if u"author" in doc and doc[u"author"] is not None:
+            document[u"author"] = doc["author"]
 
         if u"title" in results.highlights[doc["id"]]:
-            document["title"] = results.highlights[doc["id"]][u"title"][0]
+            document[u"title"] = results.highlights[doc["id"]]["title"][0]
         else:
-            document["title"] = doc["title"]
+            document[u"title"] = doc["title"]
 
         if u"content" in results.highlights[doc["id"]]:
-            document["snippet"] = results.highlights[doc["id"]][u"content"]
+            document[u"snippet"] = results.highlights[doc["id"]]["content"]
 
         documents.append(document)
     
-    r = {"results": documents}
+    r = {u"results": documents}
 
     if results.facets is not None:
-        r["facets"] = {}
+        r[u"facets"] = {}
         if "published" in results.facets:
 
             # Remove "before" or "after" facet fields if they have 0 results
-            published_facets = [ facet for facet in results.facets["published"] \
-                    if not ((facet[0] == "before" and facet[1] == 0) or (facet[0] == "after" and facet[1] == 0))]
-            r["facets"]["published"] = published_facets
+            published_facets = [facet for facet in results.facets["published"]
+                                if not ((facet[0] == "before" and facet[1] == 0) or (facet[0] == "after" and facet[1] == 0))]
+            r[u"facets"][u"published"] = published_facets
         if "source" in results.facets:
-            r["facets"]["source"] = results.facets["source"]
+            r[u"facets"][u"source"] = results.facets["source"]
 
     # Calculate pagination information
-    r["offset"] = start_index
-    r["total"] = results.results_count 
+    r[u"offset"] = start_index
+    r[u"total"] = results.results_count
     return r
