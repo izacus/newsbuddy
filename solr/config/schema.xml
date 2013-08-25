@@ -51,13 +51,13 @@
       <field name="_version_" type="long" indexed="true" stored="true" multiValued="false" />
       <field name="id" type="string" indexed="true" stored="true" multiValued="false" required="true" />
       <!-- Name, caption or title -->
-      <field name="title" type="text" indexed="true" stored="true" multiValued="false" required="true" />
+      <field name="title" type="text" indexed="true" stored="true" multiValued="false" required="true" termVectors="true" termPositions="true" termOffsets="true" />
       <field name="source" type="string" indexed="true" stored="true" multiValued="false" required="true" />
       <field name="source_url" type="string" indexed="false" stored="true" multiValued="false" required="true" />
-      <field name="author" type="text" indexed="true" stored="false" multiValued="false" required="false" />
+      <field name="author" type="text" indexed="true" stored="false" multiValued="false" required="false" termVectors="true" termPositions="true" termOffsets="true" />
       <field name="author_exact" type="string" indexed="false" stored="true" multiValued="false" required="false" />
       <field name="language" type="string" indexed="true" stored="true" multiValued="false" required="false" />
-      <field name="content" type="text" indexed="true" stored="true" multiValued="false" required="false" />
+      <field name="content" type="text" indexed="true" stored="true" multiValued="false" required="false" termVectors="true" termPositions="true" termOffsets="true" />
       <field name="published" type="date" indexed="true" stored="true" multiValued="false" required="true" />
       <field name="all_text" type="text" indexed="true" stored="true" multiValued="true" required="true" />
   </fields>

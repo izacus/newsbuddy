@@ -29,6 +29,18 @@
 
   <dataDir>${solr.en.data.dir:}</dataDir>
 
+  <searchComponent name="highlight" class="solr.HighlightComponent">
+
+  <boundaryScanner name="breakIterator" class="solr.highlight.BreakIteratorBoundaryScanner">
+    <lst name="defaults">
+        <str name="hl.bs.type">WORD</str>
+        <str name="hl.bs.language">sl</str>
+        <str name="hl.bs.country">SI</str>
+    </lst>
+  </boundaryScanner>
+
+  </searchComponent>
+
   <updateHandler class="solr.DirectUpdateHandler2">
     <updateLog>
       <str name="dir">${solr.en.data.dir:}</str>
@@ -48,7 +60,12 @@
       <str name="json.nl">map</str>
       <str name="hl">true</str>
       <str name="hl.fl">title,content</str>
-      <str name="f.title.hl.fragsize">0</str>
+      <str name="hl.snippets">5</str>
+      <str name="hl.useFastVectorHighlighter">true</str>
+      <str name="hl.tag.pre"><![CDATA[<em><strong>]]></str>
+      <str name="hl.tag.post"><![CDATA[</strong></em>]]></str>
+      <str name="hl.fragsize">200</str>
+      <str name="f.title.hl.fragsize">1000</str>
       <str name="fl">id,title,published,source,source_url,content</str>
       <str name="facet">true</str>
       <str name="facet.field">source</str>

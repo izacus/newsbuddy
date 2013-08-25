@@ -11,6 +11,7 @@ if __name__ == "__main__":
     solr_int = solr.Solr(settings.SOLR_ENDPOINT_URLS, settings.SOLR_DEFAULT_ENDPOINT)
     # Now iterate over news
     docs = []
+    count = 0
     for news_item in db.news.get_news():
         doc = { "id" : news_item.id, "title" : news_item.title,
                 "source" : news_item.source, "language" : "si",
@@ -20,9 +21,9 @@ if __name__ == "__main__":
         if news_item.author is not None:
             doc["author"] = news_item.author
 
-        docs.append(doc)
+        solr_int.add(doc)
+        count += 1
 
-    solr_int.add(docs)
     solr_int.commit()
 
-    print "Dispached " + str(len(docs)) + " documents to solr. "
+    print "Dispached " + str(count) + " documents to solr. "
