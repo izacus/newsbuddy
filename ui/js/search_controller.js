@@ -1,4 +1,4 @@
-var newsBuddy = angular.module('NewsBuddy', ['infinite-scroll']);
+var newsBuddy = angular.module('NewsBuddy', ['ngSanitize', 'infinite-scroll']);
 
 $(document).ready(function () {
    $('#no-results').hide();
@@ -68,6 +68,8 @@ newsBuddy.controller('SearchController', function($scope, $http) {
                 $scope.results[date] = [];
 
             $scope.results[date].push(results[i]);
+
+            console.info(results[i].title);
         }
 
         // Now update results array. We need to make sure we only add items to appropriate part to prevent full re-render

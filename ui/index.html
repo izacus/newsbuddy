@@ -37,12 +37,10 @@
                 <ul>
                     <li class="list-unstyled" ng-repeat="result in result_group.articles">
                         <h5>
-                            <a href="{{result.link}}"><span ng-bind-html-unsafe="result.title">{{ result.title }}</span> {{ result.author }}</a> <br/>
+                            <a href="{{result.link}}"><span ng-bind-html="result.title"></span> {{ result.author }}</a> <br/>
                             <small>{{ result.source }};  {{ result.published | date:'mediumDate' }} {{ result.published | date:'shortTime' }}</small>
                         </h5>
-                        <p ng-repeat="snippet in result.snippet">
-                            ... <span ng-bind-html-unsafe="snippet">{{ snippet }}</span> ...
-                        </p>
+                        <p ng-repeat="snippet in result.snippet">... <span ng-bind-html="snippet"></span> ...</p>
                     </li>
                 </ul>
             </div>
@@ -70,6 +68,7 @@
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="js/bootstrap.min.js"></script>
     <script src="js/angular.min.js"></script>
+    <script src="js/angular-sanitize.min.js"></script>
     <script src="js/angular-locale_sl-si.js"></script>
     <script src="js/ng-infinite-scroll.min.js"></script>
     <script src="js/search_controller.js"></script>

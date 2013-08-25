@@ -47,7 +47,7 @@ def query_for(query, start_index=0):
             document["author"] = doc["author"]
 
         if u"title" in results.highlights[doc["id"]]:
-            document["title"] = results.highlights[doc["id"]][u"title"]
+            document["title"] = results.highlights[doc["id"]][u"title"][0]
         else:
             document["title"] = doc["title"]
 
