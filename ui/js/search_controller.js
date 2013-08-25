@@ -1,14 +1,13 @@
-var newsBuddy = angular.module('NewsBuddy', ['ngSanitize', 'infinite-scroll']);
+var newsBuddy = angular.module('NewsBuddy', ['ngSanitize', 'infinite-scroll'])
+                       .config(function($locationProvider) {
+                            $locationProvider.html5Mode(true).hashPrefix("!");
+                        });
 
 $(document).ready(function () {
    $('#no-results').hide();
 });
 
-newsBuddy.config(function ($locationProvider) {
-        $locationProvider.html5Mode(true).hashPrefix('!');
-});
-
-newsBuddy.controller('SearchController', function($scope, $http, $location) {
+newsBuddy.controller('SearchController', function($rootScope, $scope, $http, $location) {
 
     $scope.clearSearch = function() {
         $scope.offset = 0;
@@ -172,6 +171,14 @@ newsBuddy.controller('SearchController', function($scope, $http, $location) {
            return 0;
         });
     };
+
+    $rootScope.$on('$locationChangeSuccess', function(event) {
+        if ($scope.query !== $location.hash()) {
+            console.info("Switching location");
+            $scope.query = $location.hash();
+            $scope.search();
+        }
+    });
 
     $scope.clearSearch();
 
