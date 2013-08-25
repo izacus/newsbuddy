@@ -172,13 +172,6 @@ newsBuddy.controller('SearchController', function($rootScope, $scope, $http, $lo
         });
     };
 
-    $rootScope.$on('$locationChangeSuccess', function(event) {
-        if ($scope.query !== $location.hash()) {
-            console.info("Switching location");
-            $scope.query = $location.hash();
-            $scope.search();
-        }
-    });
 
     $scope.clearSearch();
 
