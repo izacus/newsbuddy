@@ -4,7 +4,11 @@ $(document).ready(function () {
    $('#no-results').hide();
 });
 
-newsBuddy.controller('SearchController', function($scope, $http) {
+newsBuddy.config(function ($locationProvider) {
+        $locationProvider.html5Mode(true).hashPrefix('!');
+});
+
+newsBuddy.controller('SearchController', function($scope, $http, $location) {
 
     $scope.clearSearch = function() {
         $scope.offset = 0;
@@ -16,7 +20,12 @@ newsBuddy.controller('SearchController', function($scope, $http) {
     };
 
     $scope.search = function() {
+        if (!$scope.query)
+            return;
+
+        $('#no-results').show();
         $scope.clearSearch();
+        $location.hash($scope.query);
         $scope.loadPage();
     };
 
@@ -32,9 +41,6 @@ newsBuddy.controller('SearchController', function($scope, $http) {
     $scope.loadPage = function()
     {
         if ($scope.loading)
-            return;
-
-        if (!$scope.query)
             return;
 
         $scope.loading = true;
@@ -137,7 +143,15 @@ newsBuddy.controller('SearchController', function($scope, $http) {
         });
     };
 
-    //$locationProvider.html5Mode(true).hashPrefix('!');
     $scope.clearSearch();
-    $scope.loadLatestNews();
+
+    if ($location.hash())
+    {
+        $scope.query = $location.hash();
+        $scope.search();
+    }
+    else
+    {
+        $scope.loadLatestNews();
+    }
 });
