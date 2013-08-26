@@ -47,14 +47,15 @@ class RTVScraper(object):
         article_html = get_article(self.RTV_ARTICLE_URL + str(article_id))
         result = {}
         article = bs4.BeautifulSoup(article_html)
-        result["title"] = article.title.text
+        result["title"] = article.title.text.strip()
 
         subtitles = article.find_all("div", class_="subtitle")
         subtitles = [div.text for div in subtitles]
         result["subtitles"] = subtitles
 
         text_content = article.find_all("p")
-        text_content = " ".join([p.text for p in text_content])
+        text_content = u"\n".join([u" ".join(p.stripped_strings) for p in text_content])
+
         result["text"] = text_content
         return result
 
