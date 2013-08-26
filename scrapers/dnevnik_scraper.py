@@ -52,7 +52,7 @@ class DnevnikScraper(object):
         
         author = article.body.find(class_="article-source")
         if author is not None and author.strong is not None:
-            result["author"] = author.strong.text
+            result["author"] = author.strong.text.strip()
         else:
             result["author"] = None
 
@@ -64,5 +64,6 @@ class DnevnikScraper(object):
         if content is None:
             return None
         else:
-            result["text"] = content.text.strip()
+            result["text"] = u" ".join(content.stripped_strings)
+            print result["text"]
             return result
