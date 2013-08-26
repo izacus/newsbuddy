@@ -11,32 +11,7 @@
     <link href="css/ui.css" rel="stylesheet" media="screen">
 </head>
 <body ng-controller="StatsController">
-    <div class="navbar navbar-inverse" role="navigation">
-        <a class="navbar-brand" href="index.html">Novičar</a>
-        <ul class="nav navbar-nav">
-            <li><a href="index.html">Iskanje</a></li>
-            <li class="active"><a href="#">Statistika</a></li>
-        </ul>
-    </div>
 
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-4"><div class="well text-center"><h3>Vseh novic: <br/> {{ stats.total_news }} </h3></div></div>
-            <div class="col-lg-4">&nbsp;</div>
-            <div class="col-lg-4"><div class="well text-center"><h3>Novic danes: <br/> {{ stats.news_today }}</h3></div></div>
-        </div>
-
-        <div class="row col-lg-8">
-            <h3>Novice po virih</h3>
-            <hr>
-        </div>
-        <div class="row col-lg-8" id="news-by-source" style="height: 300px; width: 100%;"></div>
-        <div class="row col-lg-8">
-            <h3>Novice po virih danes</h3>
-            <hr>
-        </div>
-        <div class="row col-lg-8" id="news-by-source-today" style="height: 300px; width: 100%;"></div>
-    </div>
 
     <script src="http://code.jquery.com/jquery.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
