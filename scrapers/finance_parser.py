@@ -63,5 +63,4 @@ class FinanceScraper(object):
             return None
         else:
             result["text"] = u" ".join(content.stripped_strings)
-            print result["text"]
             return result
