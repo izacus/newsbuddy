@@ -60,8 +60,7 @@ class MladinaScraper(object):
             result["author"] = None
 
         # Content
-        content_items = main_part.findAll(attrs={'class' : None})
-        content = ' '.join([item.text.strip() for item in content_items])
+        content_items = main_part.findAll(attrs={'class': None})
+        content = u"\n".join([u"\n".join(item.stripped_strings) for item in content_items])
         result["text"] = content
-
         return result
