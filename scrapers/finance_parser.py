@@ -53,11 +53,12 @@ class FinanceScraper(object):
 
         subtitle = article.body.find(class_="article-flash")
         if subtitle is not None:
-            result["subtitles"] = [subtitle.text.strip()]
+            result["subtitles"] = [subtitle.string.strip()]
 
         content = article.body.find(class_="art-content")
         if content is None:
             return None
         else:
-            result["text"] = content.text.strip()
+            result["text"] = u" ".join(content.stripped_strings)
+            print result["text"]
             return result
