@@ -62,5 +62,5 @@ class VecerScraper(object):
         # Remove all script tags from text container
         scripts = text_container.findAll('script')
         [script.extract() for script in scripts]
-        result["text"] = text_container.text.strip()
+        result["text"] = u" ".join(text_container.stripped_strings)
         return result
