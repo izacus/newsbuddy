@@ -66,5 +66,4 @@ class TwentyFourHrsScraper(object):
         if u"Preverite vpisani naslov ali uporabite možnost iskanja po naših straneh." in result["text"]:
             return None
 
-        print result["text"]
         return result

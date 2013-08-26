@@ -67,7 +67,6 @@ class DeloScraper(object):
             text_content = u" ".join([p_item.text.strip() for p_item in content_item.find_all('p', text=True) if p_item is not None])
             text_content = text_content.replace("  ", " ")
             result["text"] = text_content
-            print result["text"]
             return result
         else:
             logger.warn("Unknown article content for %s", link)
