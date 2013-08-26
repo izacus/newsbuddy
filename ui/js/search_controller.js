@@ -1,13 +1,4 @@
-var newsBuddy = angular.module('NewsBuddy', ['ngSanitize', 'infinite-scroll'])
-                       .config(function($locationProvider) {
-                            $locationProvider.html5Mode(true).hashPrefix("!");
-                        });
-
-$(document).ready(function () {
-   $('#no-results').hide();
-});
-
-newsBuddy.controller('SearchController', function($rootScope, $scope, $http, $location) {
+function SearchController($scope, $http, $location) {
 
     $scope.clearSearch = function() {
         $scope.offset = 0;
@@ -185,4 +176,4 @@ newsBuddy.controller('SearchController', function($rootScope, $scope, $http, $lo
     {
         $scope.loadLatestNews();
     }
-});
+};
