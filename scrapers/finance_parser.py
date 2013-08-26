@@ -42,6 +42,9 @@ class FinanceScraper(object):
         result = {}
 
         article = bs4.BeautifulSoup(article_html)
+        if article.body is None:
+            return None
+
         title = article.body.find(class_="article-title")
         result["title"] = title.text.strip()
 

@@ -44,7 +44,12 @@ class MladinaScraper(object):
         article = bs4.BeautifulSoup(article_html)
 
         main_part = article.find(class_="main")
-        result["title"] = main_part.find('h1').text.strip()
+        title = main_part.find('h1')
+
+        if title is None:
+            return None
+
+        result["title"] = title.text.strip()
 
         subtitles = main_part.findAll('h2')
         result["subtitles"] = []

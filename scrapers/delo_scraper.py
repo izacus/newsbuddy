@@ -39,7 +39,12 @@ class DeloScraper(object):
         article_html = get_article(link)
         result = {}
         article = bs4.BeautifulSoup(article_html)
-        result["title"] = article.title.text.strip()
+
+        title = article.title
+        if title is None:
+            return None
+
+        result["title"] = title.text.strip()
 
         subtitle = article.find(id="EXCERPT", text=True)
         if subtitle is None:

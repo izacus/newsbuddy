@@ -29,6 +29,7 @@ class DnevnikScraper(object):
 
             if article is None: continue
             published_date = time_to_datetime(feed_entry["published_parsed"])
+            article["title"] = feed_entry["title"]
             article["published"] = published_date
             article["source"] = "Dnevnik"
             article["source_url"] = link
@@ -47,8 +48,6 @@ class DnevnikScraper(object):
         result = {}
 
         article = bs4.BeautifulSoup(article_html)
-        title = article.body.find(class_="title", text=True)
-        result["title"] = title.text.strip()
         
         author = article.body.find(class_="article-source")
         if author is not None and author.strong is not None:
@@ -65,5 +64,4 @@ class DnevnikScraper(object):
             return None
         else:
             result["text"] = u" ".join(content.stripped_strings)
-            print result["text"]
             return result
