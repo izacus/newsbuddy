@@ -55,5 +55,5 @@ class ZurnalScraper(object):
             result["author"] = None 
 
         content_div = article.find_all("div", class_="entry")
-        result["text"] = content_div[0].text
+        result["text"] = u" ".join(content_div[0].stripped_strings)
         return result
