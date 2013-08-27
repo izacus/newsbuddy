@@ -76,10 +76,15 @@
       <str name="facet.range.end">NOW</str>
       <str name="facet.range.gap">+1DAY</str>
       <str name="facet.range.other">before</str>
+      <str name="mlt.match.include">false</str>
+      <str name="mlt.boost">true</str>
+      <str name="mlt.mindf">2</str>
+      
   </lst>
 
   </requestHandler>
 
+  <requestHandler name="/mlt" class="solr.MoreLikeThisHandler" />  
   <requestHandler name="/analysis/field" startup="lazy" class="solr.FieldAnalysisRequestHandler" />
   <requestHandler name="/update" class="solr.UpdateRequestHandler" />
   <requestHandler name="/update/json" class="solr.JsonUpdateRequestHandler" />
