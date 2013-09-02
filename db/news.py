@@ -21,7 +21,7 @@ def create_news_db(engine):
     Base.metadata.create_all(engine)
 
 def get_db_session():
-    db_engine = create_engine(settings.DB_CONNECTION_STRING)
+    db_engine = create_engine(settings.DB_CONNECTION_STRING, echo=True)
     create_news_db(db_engine)
     Session = sessionmaker(bind=db_engine)
     return Session()

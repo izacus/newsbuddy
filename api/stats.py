@@ -45,9 +45,9 @@ def get_stats(request):
                                     .group_by(years, months, days)\
                                     .order_by(years, months, days)
 
-            stats["news_by_day"] = []
+            stats["news_by_day"] = {}
             for years, month, day, count in news_by_day:
-                stats["news_by_day"].append({"%04d-%02d-%02d" % (years, month, day): count})
+                stats["news_by_day"]["%04d-%02d-%02d" % (years, month, day)] = count
 
         except Exception as e:
             logger.error("Failed to get stats.", exc_info=True)
