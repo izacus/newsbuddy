@@ -1,9 +1,9 @@
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 from cornice import Service
 import db
 from db.news import NewsItem
-from sqlalchemy import func
+from sqlalchemy import func, extract
 
 logger = logging.getLogger("api.stats")
 
@@ -34,6 +34,20 @@ def get_stats(request):
 
             news_today = db_session.query(func.count(NewsItem.id)).filter(NewsItem.published > midnight_today).scalar()
             stats["news_today"] = news_today
+
+            # Get stats for last month
+            this_month = datetime.utcnow() - timedelta(30)
+            years = extract('year', NewsItem.published).label("years")
+            months = extract('month', NewsItem.published).label('months')
+            days = extract('day', NewsItem.published).label('days')
+            news_by_day = db_session.query(years, months, days, func.count(NewsItem.id)) \
+                                    .filter(NewsItem.published > this_month) \
+                                    .group_by(years, months, days)\
+                                    .order_by(years, months, days)
+
+            stats["news_by_day"] = []
+            for years, month, day, count in news_by_day:
+                stats["news_by_day"].append({"%04d-%02d-%02d" % (years, month, day): count})
 
         except Exception as e:
             logger.error("Failed to get stats.", exc_info=True)
