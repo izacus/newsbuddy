@@ -1,10 +1,14 @@
 from cornice import Service
+import db
+from db.news import NewsItem
 import settings
 from pysolarized import solr
 from pysolarized import from_solr_date
+from sqlalchemy.orm.exc import NoResultFound
 
 news_query = Service(name="news_query", path="/news/query/", description="Returns news matching the query")
 latest = Service(name="latest_news", path="/news/latest/", description="Returns latest collected news")
+details = Service(name="news_details", path="/news/detail/", description="Returns detail about a news document")
 
 PAGE_SIZE = 30
 
@@ -18,6 +22,27 @@ def get_latest(request):
     results[u"total"] = len(results[u"results"])
     return results
 
+@details.get()
+def get_details(request):
+    if u"id" not in request.GET:
+        return {u"error": u"Missing id query parameter."}
+
+    id = request.GET["id"]
+    db_session = db.news.get_db_session()
+
+    try:
+        item = db_session.query(NewsItem).filter(NewsItem.id == id).one()
+    except NoResultFound:
+        return {u"error": u"Document matching id was not found."}
+
+    return {
+        u"id": item.id,
+        u"title": item.title,
+        u"author": item.author,
+        u"published": str(item.published.isoformat()) + "Z",
+        u"source": item.source,
+        u"link": item.source_url
+    }
 
 @news_query.get()
 def get_news(request):
@@ -35,7 +60,6 @@ def get_news(request):
         if u"source" in request.GET:
             filters[u"source"] = request.GET[u"source"]
 
-    print request.GET
     return query_for(request.GET[u"q"], start_index=start_index, filters=filters)
 
 

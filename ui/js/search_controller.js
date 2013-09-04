@@ -82,6 +82,11 @@ function SearchController($scope, $http, $location) {
         $scope.loadPage();
     };
 
+
+    $scope.showSimilar = function(result_id) {
+        console.info(result_id);
+    }
+
     /**
      * Adds new results to result arrays and triggers rendering
      * @param results

@@ -18,7 +18,7 @@
             <ul>
                 <li class="list-unstyled" data-ng-repeat="result in result_group.articles">
                     <h5>
-                        <a href="{{result.link}}"><span ng-bind-html="result.title"></span> {{ result.author }}</a> <br/>
+                        <a href="{{result.link}}"><span ng-bind-html="result.title"></span></a><a href="/#!/detail/{{ result.id }}" class="btn btn-info btn-xs pull-right">Podobno</a><br/>
                         <small>{{ result.source }};  {{ result.published | date:'mediumDate' }} {{ result.published | date:'shortTime' }}</small>
                     </h5>
                     <p data-ng-repeat="snippet in result.snippet">... <span ng-bind-html="snippet"></span> ...</p>
