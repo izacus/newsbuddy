@@ -45,6 +45,16 @@
         <filter class="solr.ShingleFilterFactory" maxShingleSize="3" outputUnigrams="true" />
       </analyzer>
     </fieldType>
+
+    <fieldType name="text_suggest" class="solr.TextField" positionIncrementGap="100">
+        <analyzer>
+            <charFilter class="solr.HTMLStripCharFilterFactory"/>
+            <tokenizer class="solr.StandardTokenizerFactory"/>
+            <filter class="solr.LowerCaseFilterFactory"/>
+            <filter class="solr.StopFilterFactory" words="stopwords.txt" ignoreCase="true" />
+            <filter class="solr.ShingleFilterFactory" />
+        </analyzer>
+    </fieldType>
   </types>
 
   <fields>
@@ -59,6 +69,7 @@
       <field name="language" type="string" indexed="true" stored="true" multiValued="false" required="false" />
       <field name="content" type="text" indexed="true" stored="true" multiValued="false" required="false" termVectors="true" termPositions="true" termOffsets="true" />
       <field name="published" type="date" indexed="true" stored="true" multiValued="false" required="true" />
+      <field name="suggestions" type="text_suggest" indexed="true" multiValued="true" stored="false" />
       <field name="all_text" type="text" indexed="true" stored="true" multiValued="true" required="true" />
   </fields>
 
@@ -72,6 +83,8 @@
   <copyField source="content" dest="all_text" />
   <copyField source="source" dest="all_text" />
   <copyField source="author" dest="author_exact" />
+  <copyField source="title" dest="suggestions" />
+  <copyField source="content" dest="suggestions" />
 
   <!-- SolrQueryParser configuration: defaultOperator="AND|OR" -->
   <solrQueryParser defaultOperator="AND" />

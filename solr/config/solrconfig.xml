@@ -29,8 +29,9 @@
 
   <dataDir>${solr.en.data.dir:}</dataDir>
 
-  <searchComponent name="highlight" class="solr.HighlightComponent">
 
+
+  <searchComponent name="highlight" class="solr.HighlightComponent">
   <boundaryScanner name="breakIterator" class="solr.highlight.BreakIteratorBoundaryScanner">
     <lst name="defaults">
         <str name="hl.bs.type">WORD</str>
@@ -38,7 +39,16 @@
         <str name="hl.bs.country">SI</str>
     </lst>
   </boundaryScanner>
-
+  </searchComponent>
+  <searchComponent class="solr.SpellCheckComponent" name="suggest">
+      <lst name="spellchecker">
+        <str name="name">suggest</str>
+        <str name="classname">org.apache.solr.spelling.suggest.Suggester</str>
+        <str name="lookupImpl">org.apache.solr.spelling.suggest.tst.TSTLookup</str>
+        <str name="field">suggestions</str> <!-- the indexed field to derive suggestions from-->
+        <float name="threshold">0.005</float>
+        <str name="buildOnCommit">true</str>
+      </lst>
   </searchComponent>
 
   <updateHandler class="solr.DirectUpdateHandler2">
@@ -97,6 +107,19 @@
     <lst name="defaults">
       <str name="echoParams">all</str>
     </lst>
+  </requestHandler>
+
+  <requestHandler class="org.apache.solr.handler.component.SearchHandler" name="/suggest">
+    <lst name="defaults">
+        <str name="spellcheck">true</str>
+        <str name="spellcheck.dictionary">suggest</str>
+        <str name="spellcheck.onlyMorePopular">true</str>
+        <str name="spellcheck.count">5</str>
+        <str name="spellcheck.collate">true</str>
+    </lst>
+    <arr name="components">
+        <str>suggest</str>
+    </arr>
   </requestHandler>
    
   <!-- config for the admin interface --> 
