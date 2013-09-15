@@ -1,17 +1,20 @@
 from cornice import Service
 import db
 from db.news import NewsItem
+from requests import Session
 import settings
 from pysolarized import solr
 from pysolarized import from_solr_date
 from sqlalchemy.orm.exc import NoResultFound
 
+req_session = Session()
+
 news_query = Service(name="news_query", path="/news/query/", description="Returns news matching the query")
 latest = Service(name="latest_news", path="/news/latest/", description="Returns latest collected news")
 details = Service(name="news_details", path="/news/detail/", description="Returns detail about a news document")
+query_suggest = Service(name="news_query_suggest", path="/news/suggest/query", description="Returns query suggestions")
 
 PAGE_SIZE = 30
-
 
 @latest.get()
 def get_latest(request):
@@ -43,6 +46,27 @@ def get_details(request):
         u"source": item.source,
         u"link": item.source_url
     }
+
+@query_suggest.get()
+def get_query_suggestions(request):
+    if u"q" not in request.GET:
+        return {u"error": u"Missing q query parameter."}
+
+    suggest_url = settings.SOLR_ENDPOINT_URLS[settings.SOLR_DEFAULT_ENDPOINT] + "suggest"
+    parameters = {u"q": request.GET[u"q"], u"wt": u"json"}
+    result = req_session.post(suggest_url, data=parameters)
+    result_json = result.json()
+    suggestion_data = result_json["spellcheck"]["suggestions"]
+    
+    if len(suggestion_data) == 0:
+        return {u"suggestions": [], u"startOffset": 0, u"endOffset": 0, u"fieldSuggestion": None}
+
+    start_offest = suggestion_data[1]["startOffset"]
+    end_offset = suggestion_data[1]["endOffset"]
+    suggestions = suggestion_data[1]["suggestion"]
+    field_fill = suggestion_data[3]
+
+    return {u"suggestions": suggestions, u"startOffset": start_offest, u"endOffset": end_offset, u"fieldSuggestion": field_fill}
 
 @news_query.get()
 def get_news(request):
