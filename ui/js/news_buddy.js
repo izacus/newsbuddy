@@ -1,4 +1,4 @@
-angular.module("NewsBuddy", ['ngRoute', 'ngSanitize', 'infinite-scroll']).
+angular.module("NewsBuddy", ['ngRoute', 'ngSanitize', 'infinite-scroll', 'typeahead.directives']).
        config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
             $locationProvider.hashPrefix('!').html5Mode(false);
             $routeProvider

@@ -1,5 +1,7 @@
 function SearchController($scope, $http, $location) {
 
+    $scope.query = null;
+
     $scope.clearSearch = function() {
         $scope.offset = 0;
         $scope.results = {};
@@ -48,7 +50,6 @@ function SearchController($scope, $http, $location) {
 
         $location.hash($scope.query);
         $http.get(url).success(function data(data) {
-            console.info($scope.query);
             $location.hash($scope.query);
             if (!data["results"]) {
                 $scope.loading = false;
@@ -82,9 +83,8 @@ function SearchController($scope, $http, $location) {
         $scope.loadPage();
     };
 
-
-    $scope.showSimilar = function(result_id) {
-        console.info(result_id);
+    $scope.processSuggestions = function(parsedResponse) {
+        return parsedResponse["suggestions"];
     }
 
     /**
@@ -169,8 +169,11 @@ function SearchController($scope, $http, $location) {
         });
     };
 
-
     $scope.clearSearch();
+    $scope.$on("newsbuddy:autocomplete:selected", function(e) {
+        $scope.search();
+        $scope.$digest();
+    });
 
     if ($location.hash())
     {

@@ -2,9 +2,18 @@
     <form ng-submit="search()">
         <fieldset>
             <div class="input-group col-lg-10">
-                <input ng-model="query" type="text" class="input-large form-control" id="query" placeholder="Iskalni niz">
+                <input ng-model="query"
+                       type="text"
+                       class="input-large form-control"
+                       id="query"
+                       placeholder="Iskalni niz"
+                       url="/news/suggest/query?q=%QUERY"
+                       filter="processSuggestions(parsedResponse)"
+                       selected-item="selectedItem"
+                       ng-typeahead
+                        >
             </div>
-            <div class="col-lg-2"><button type="button" class="btn btn-primary" style="width: 100%" ng-click="search()">Išči</div>
+            <div class="col-lg-2"><button type="submit" class="btn btn-primary" style="width: 100%" ng-click="search()">Išči</div>
         </fieldset>
     </form>
 </div>
