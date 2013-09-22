@@ -25,6 +25,9 @@ def get_related(request):
 
     documents = []
     for doc in results.documents:
+        if "score" in doc and float(doc["score"]) < 0.1:
+            continue
+
         document = {u"id": doc["id"],
                     u"published": str(from_solr_date(doc["published"]).isoformat()) + "Z",
                     u"link": doc["source_url"],
