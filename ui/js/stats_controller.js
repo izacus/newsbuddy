@@ -59,11 +59,12 @@ function StatsController($scope, $http, $filter) {
         ]);
         var options = {
             hAxis: { title: "Novic" },
-            tooltip: { showColorCode: true }
+            tooltip: { showColorCode: true },
+            backgroundColor: "#f9f9f9"
         };
 
         var news_by_day_chart = new google.visualization.AreaChart(document.getElementById('news-by-day'));
-        news_by_day_chart.draw(news_by_day_data, { "legend.position": "none", isStacked: true });
+        news_by_day_chart.draw(news_by_day_data, { "legend.position": "none", isStacked: true, backgroundColor: "#f9f9f9" });
 
         var sources_chart = new google.visualization.BarChart(document.getElementById('news-by-source'));
         sources_chart.draw(sources_data, options);
