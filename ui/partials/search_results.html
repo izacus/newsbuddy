@@ -28,7 +28,7 @@
             <ul>
                 <li class="list-unstyled" data-ng-repeat="result in result_group.articles">
                     <h4>
-                        <a href="{{result.link}}"><span ng-bind-html="result.title"></span></a><a href="/#!/detail/{{ result.id }}" class="btn btn-info btn-xs pull-right">Podobno</a><br/>
+                        <a href="{{result.link}}"><span ng-bind-html="result.title"></span></a><a href="/#!/detail/{{ result.id }}" class="btn btn-primary btn-xs pull-right">Podobno</a><br/>
                         <small>{{ result.source }};  {{ result.published | date:'mediumDate' }} {{ result.published | date:'shortTime' }}</small>
                     </h4>
                     <p data-ng-repeat="snippet in result.snippet">... <span ng-bind-html="snippet"></span> ...</p>
@@ -49,15 +49,17 @@
             Viri
             <a href="#" class="glyphicon glyphicon-remove pull-right" ng-show="search_filters.source" ng-click="filter('source', null)"></a>
         </legend>
-        <p data-ng-repeat="source in sources">
-            <a href="#" ng-click="filter('source', source[0])">{{ source[0] }}</a> ({{ source[1] }})
-        </p>
+        <ul class="list-group">
+            <li data-ng-repeat="source in sources" class="list-group-item"><a href="#" ng-click="filter('source', source[0])">{{ source[0] }}</a> <span class="badge">{{ source[1] }}</span></li>
+        </ul>
         <legend ng-show="publish_dates">
             Datumi
             <a href="#" class="glyphicon glyphicon-remove pull-right" ng-show="search_filters.published" ng-click="filter('published', null)"></a>
         </legend>
-        <p data-ng-repeat="publish_date in publish_dates">
-            <a href="#" ng-click="filter('published', publish_date[0])">{{ publish_date[0] | date:'mediumDate' }}</a> ({{ publish_date[1] }})
-        </p>
+        <ul class="list-group">
+        <li class="list-group-item" data-ng-repeat="publish_date in publish_dates">
+            <a href="#" ng-click="filter('published', publish_date[0])">{{ publish_date[0] | date:'mediumDate' }}</a> <span class="badge">{{ publish_date[1] }}</span>
+        </li>
+        </ul>
     </div>
 </div>
