@@ -1,21 +1,27 @@
 <div class="row">
-    <h2>{{ news_item.title }}</h2>
+    <h2><a href="{{ news_item.link }}">{{ news_item.title }}</a></h2>
     <div class="col-lg-6">
         <h4>Avtor: {{ news_item.author }}</h4>
         <h4>Objavljeno: {{ news_item.published | date:'mediumDate' }} {{ news_item.published | date:'shortTime' }}</h4>
     </div>
     <div class="col-lg-6">
         <h4>Vir: {{ news_item.source }}</h4>
-        <h4><a href="{{ news_item.link }}">Izvorna novica</a></h4>
     </div>
 </div>
-<div class="row">
+
+<div class="row" ng-show="related_news">
     <h3>
         Podobne novice
     </h3>
     <hr>
 </div>
-<div class="row" data-ng-repeat="related in related_news">
+<div class="row" ng-hide="related_news || loading">
+    <hr>
+    <h4>
+        Ni bilo najdenih podobnih novic.
+    </h4>
+</div>
+<div class="row" data-ng-repeat="related in related_news" ng-show="related_news">
     <a href="{{related.link}}"><span ng-bind-html="related.title"></span></a> | <small>{{ related.source }};  {{ related.published | date:'mediumDate' }} {{ related.published | date:'shortTime' }}</small>
     <br />
 </div>
