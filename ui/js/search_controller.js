@@ -140,17 +140,18 @@ function SearchController($scope, $http, $location) {
 
     var renderFacets = function(facets) {
         if (facets["source"] != null) {
-                $scope.sources = facets["source"];
+                var sourceFacets = facets["source"];
                 // Sort sources by number of hits descending
-                $scope.sources.sort(function (a, b) {
+                sourceFacets.sort(function (a, b) {
                     return b[1] - a[1];
                 });
+
+                $scope.sources = sourceFacets;
             }
 
         if (facets["published"] != null) {
-            $scope.publish_dates = facets["published"]
-            // Sort publish dates by date descending as well
-            $scope.publish_dates.sort(function (a,b) {
+            var publishedFacets = facets["published"];
+            publishedFacets.sort(function (a,b) {
                 if (a[0] > b[0])
                     return -1;
                 else if (a[0] < b[0])
@@ -158,6 +159,11 @@ function SearchController($scope, $http, $location) {
                 else
                     return 0;
             });
+
+            if (publishedFacets.length > 0 && publishedFacets[0][0] == "before")
+                publishedFacets[0][0] = "Prej";     // Don't leave "before" marker in the published facet
+
+            $scope.publish_dates = publishedFacets;
         }
     }
 

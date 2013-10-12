@@ -1,7 +1,7 @@
 <div class="row">
     <form ng-submit="search()">
         <fieldset>
-            <div class="input-group col-md-10">
+            <div class="input-group col-md-10 col-xs-12">
                 <input ng-model="query"
                        type="text"
                        class="input-large form-control"
@@ -14,7 +14,8 @@
                        ng-typeahead
                         >
             </div>
-            <div class="col-md-2"><button type="submit" class="btn btn-default btn-sm" style="width: 100%" ng-click="search()"><span class="glyphicon glyphicon-search pull-left"></span> Išči</div>
+            <div class="visible-xs visible-sm" >&nbsp;</div>
+            <div class="col-md-2 col-xs-12"><button type="submit" class="btn btn-default btn-sm" style="width: 100%" ng-click="search()"><span class="glyphicon glyphicon-search pull-left"></span> Išči</div>
         </fieldset>
     </form>
 </div>
