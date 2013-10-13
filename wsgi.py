@@ -1,4 +1,5 @@
 import api
+import logging
 from pyramid.config import Configurator
 import settings
 
@@ -14,3 +15,4 @@ if settings.SENTRY_CONNECTION_STRING is not None:
 
     client = Client(settings.SENTRY_CONNECTION_STRING)
     application = Sentry(application, client=client)
+    client.logger.setLevel(logging.WARNING)
