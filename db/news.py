@@ -21,7 +21,7 @@ def create_news_db(engine):
     Base.metadata.create_all(engine)
 
 def get_db_session():
-    db_engine = create_engine(settings.DB_CONNECTION_STRING, echo=True)
+    db_engine = create_engine(settings.DB_CONNECTION_STRING)
     create_news_db(db_engine)
     Session = sessionmaker(bind=db_engine)
     return Session()
@@ -50,7 +50,6 @@ def store_news(news):
         count += 1
 
     db_session.commit()
-    print "Added ", count,  " new items."
 
 def get_news():
     db_session = get_db_session()
