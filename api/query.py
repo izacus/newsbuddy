@@ -15,6 +15,8 @@ latest = Service(name="latest_news", path="/news/latest/", description="Returns 
 details = Service(name="news_details", path="/news/detail/", description="Returns detail about a news document")
 query_suggest = Service(name="news_query_suggest", path="/news/suggest/query", description="Returns query suggestions")
 
+summarizer = mining.summarizer.Summarizer()
+
 PAGE_SIZE = 30
 
 @latest.get()
@@ -28,7 +30,7 @@ def get_latest(request):
     # Summarize results
     for result in results[u"results"]:
         content = result[u"content"]
-        summary = mining.summarizer.summarize(content)
+        summary = summarizer.summarize(content)
         del result[u"content"]
         result[u"snippet"] = summary
 
