@@ -17,6 +17,11 @@ class Summarizer():
         dir = os.path.join(this_dir, "tokenizers/slovene.pickle")
         self.sent_detector = nltk.data.load("file://" + dir)
 
+        self.stopwords = open(os.path.join(this_dir, "tokenizers/stopwords.txt"), "rb").read().splitlines()
+        self.stopwords = filter(lambda w: not w.startswith("#"), self.stopwords)
+        # Convert to unicode
+        self.stopwords = [word.decode("utf-8") for word in self.stopwords]
+
     def summarize(self, article_text, num_sentences=DEFAULT_SUMMARIZATION_NUMBER):
 
         # Get words from article
@@ -27,7 +32,7 @@ class Summarizer():
         words = filter(lambda w: len(w) > 0, words)  # Remove empty words
 
         # Now lemmatize all words
-        words = [self.lemmatizer.lemmatize(word).lower() for word in words]
+        words = [self.lemmatizer.lemmatize(word).lower() for word in words if word.lower() not in self.stopwords]
         word_frequencies = FreqDist(words)
         most_frequent = [word[0] for word in word_frequencies.items()[:100]]
 
