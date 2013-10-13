@@ -3,6 +3,7 @@ import db
 from db.news import NewsItem
 from requests import Session
 import settings
+import mining.summarizer
 from pysolarized import solr
 from pysolarized import from_solr_date
 from sqlalchemy.orm.exc import NoResultFound
@@ -18,11 +19,19 @@ PAGE_SIZE = 30
 
 @latest.get()
 def get_latest(request):
-    results = query_for("*")
+    results = query_for("*", with_content=True)
     # Hide facets and fix count
     del results[u"facets"]
     del results[u"offset"]
     results[u"total"] = len(results[u"results"])
+
+    # Summarize results
+    for result in results[u"results"]:
+        content = result[u"content"]
+        summary = mining.summarizer.summarize(content)
+        del result[u"content"]
+        result[u"summary"] = summary
+
     return results
 
 @details.get()
@@ -87,7 +96,7 @@ def get_news(request):
     return query_for(request.GET[u"q"], start_index=start_index, filters=filters)
 
 
-def query_for(query, start_index=0, filters=None):
+def query_for(query, start_index=0, filters=None, with_content=False):
     solr_int = solr.Solr(settings.SOLR_ENDPOINT_URLS, settings.SOLR_DEFAULT_ENDPOINT)
     results = solr_int.query(query, sort=["published desc"], start=start_index, rows=PAGE_SIZE, filters=filters)
 
@@ -111,6 +120,9 @@ def query_for(query, start_index=0, filters=None):
 
         if u"content" in results.highlights[doc["id"]]:
             document[u"snippet"] = results.highlights[doc["id"]]["content"]
+
+        if with_content:
+            document[u"content"] = doc["content"]
 
         documents.append(document)
     

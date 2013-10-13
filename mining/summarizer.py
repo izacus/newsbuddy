@@ -4,6 +4,7 @@ from lemmatizer.sllematizer import RdrLemmatizer
 import nltk.data
 from nltk import FreqDist
 from nltk.tokenize import word_tokenize
+import os
 
 DEFAULT_SUMMARIZATION_NUMBER = 3
 
@@ -16,7 +17,8 @@ def summarize(article_text, num_sentences=DEFAULT_SUMMARIZATION_NUMBER):
     words = filter(lambda w: len(w) > 0, words)  # Remove empty words
 
     # Now lemmatize all words
-    lemmatizer = RdrLemmatizer("lemmatizer/lem-me-sl.bin")
+    this_dir = os.path.dirname(os.path.abspath(__file__))
+    lemmatizer = RdrLemmatizer(os.path.join(this_dir, "lemmatizer/lem-me-sl.bin"))
     words = [lemmatizer.lemmatize(word).lower() for word in words]
     word_frequencies = FreqDist(words)
     most_frequent = [word[0] for word in word_frequencies.items()[:100]]
@@ -34,7 +36,7 @@ def summarize(article_text, num_sentences=DEFAULT_SUMMARIZATION_NUMBER):
                 wordcountdict[i] += 1
 
     sorted_wordcounts = sorted(wordcountdict.iteritems(), key=operator.itemgetter(1), reverse=True)[:num_sentences]
-    return [sentences[num] for num,count in sorted_wordcounts]
+    return [sentences[num] for num, count in sorted_wordcounts]
 
 
 
