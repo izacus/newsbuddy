@@ -30,7 +30,7 @@ def get_latest(request):
         content = result[u"content"]
         summary = mining.summarizer.summarize(content)
         del result[u"content"]
-        result[u"summary"] = summary
+        result[u"snippet"] = summary
 
     return results
 
