@@ -8,7 +8,27 @@ import os
 
 DEFAULT_SUMMARIZATION_NUMBER = 3
 
+init_done = False
+
+def do_init():
+    global init_done
+    if init_done:
+        return
+
+    init_done = True
+
+    global lemmatizer
+    this_dir = os.path.dirname(os.path.abspath(__file__))
+    lemmatizer = RdrLemmatizer(os.path.join(this_dir, "lemmatizer/lem-me-sl.bin"))
+
+    global sent_detector
+    dir = os.path.join(this_dir, "tokenizers/slovene.pickle")
+    sent_detector = nltk.data.load("file://" + dir)
+
+
 def summarize(article_text, num_sentences=DEFAULT_SUMMARIZATION_NUMBER):
+    do_init()
+
     # Get words from article
     words = word_tokenize(article_text)
 
@@ -17,14 +37,11 @@ def summarize(article_text, num_sentences=DEFAULT_SUMMARIZATION_NUMBER):
     words = filter(lambda w: len(w) > 0, words)  # Remove empty words
 
     # Now lemmatize all words
-    this_dir = os.path.dirname(os.path.abspath(__file__))
-    lemmatizer = RdrLemmatizer(os.path.join(this_dir, "lemmatizer/lem-me-sl.bin"))
     words = [lemmatizer.lemmatize(word).lower() for word in words]
     word_frequencies = FreqDist(words)
     most_frequent = [word[0] for word in word_frequencies.items()[:100]]
 
     # Now get sentences
-    sent_detector = nltk.data.load('tokenizers/punkt/slovene.pickle')
     sentences = sent_detector.tokenize(article_text)
 
     wordcountdict = defaultdict(int)
