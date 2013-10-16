@@ -1,1 +1,15 @@
 *.pyc
+
+# Ignore article DB
+*articles.db
+
+# ignore virtualenv
+/bin/
+/include/
+/lib/
+
+# ignore the ignore dir
+/ignore/
+
+# ignore the settings (there is a example)
+settings.py
