@@ -25,6 +25,9 @@ class VecerScraper(object):
                 logger.warn("Failed to parse article %s", link, exc_info=True)
                 continue
 
+            if article is None:
+                continue
+
             published_date = time_to_datetime(feed_entry["published_parsed"])
             article["title"] = feed_entry["title"]
             article["published"] = published_date

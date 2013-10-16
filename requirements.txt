@@ -7,3 +7,6 @@ cornice
 pytz
 pysolarized
 raven
+nltk
+pyramid_beaker
+pylibmc

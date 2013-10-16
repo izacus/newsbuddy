@@ -3,8 +3,15 @@ import logging
 from pyramid.config import Configurator
 import settings
 
-config = Configurator()
+config = Configurator(settings={
+    'cache.type': 'ext:memcached',
+    'cache.regions': 'news',
+    'cache.news.expires': '7200',
+    'cache.url': '127.0.0.1:11211'
+})
+
 config.include('cornice')
+config.include('pyramid_beaker')
 api.register(config)
 config.add_static_view('', 'ui')
 application = config.make_wsgi_app()

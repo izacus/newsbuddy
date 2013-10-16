@@ -1,3 +1,5 @@
+from beaker import cache
+from beaker.cache import cache_region
 from cornice import Service
 import db
 from db.news import NewsItem
@@ -21,7 +23,11 @@ PAGE_SIZE = 30
 
 @latest.get()
 def get_latest(request):
-    results = query_for("*", with_content=True)
+    return build_latest_news()
+
+@cache_region('news', 'latest_news')
+def build_latest_news():
+    results = query_for("*", 0, None, True)
     # Hide facets and fix count
     del results[u"facets"]
     del results[u"offset"]
@@ -62,13 +68,18 @@ def get_details(request):
 def get_query_suggestions(request):
     if u"q" not in request.GET:
         return {u"error": u"Missing q query parameter."}
+    query = request.GET[u"q"]
+    return build_query_suggestions(query)
 
+
+@cache_region('news', 'suggest')
+def build_query_suggestions(query):
     suggest_url = settings.SOLR_ENDPOINT_URLS[settings.SOLR_DEFAULT_ENDPOINT] + "suggest"
-    parameters = {u"q": request.GET[u"q"], u"wt": u"json"}
+    parameters = {u"q": query, u"wt": u"json"}
     result = req_session.post(suggest_url, data=parameters)
     result_json = result.json()
     suggestion_data = result_json["spellcheck"]["suggestions"]
-    
+
     if len(suggestion_data) == 0:
         return {u"suggestions": [], u"startOffset": 0, u"endOffset": 0, u"fieldSuggestion": None}
 
@@ -78,6 +89,7 @@ def get_query_suggestions(request):
     field_fill = suggestion_data[3]
 
     return {u"suggestions": suggestions, u"startOffset": start_offest, u"endOffset": end_offset, u"fieldSuggestion": field_fill}
+
 
 @news_query.get()
 def get_news(request):
@@ -95,10 +107,10 @@ def get_news(request):
         if u"source" in request.GET:
             filters[u"source"] = request.GET[u"source"]
 
-    return query_for(request.GET[u"q"], start_index=start_index, filters=filters)
+    return query_for(request.GET[u"q"], start_index, filters, False)
 
-
-def query_for(query, start_index=0, filters=None, with_content=False):
+@cache_region('news', 'query')
+def query_for(query, start_index, filters, with_content):
     solr_int = solr.Solr(settings.SOLR_ENDPOINT_URLS, settings.SOLR_DEFAULT_ENDPOINT)
     results = solr_int.query(query, sort=["published desc"], start=start_index, rows=PAGE_SIZE, filters=filters)
 
