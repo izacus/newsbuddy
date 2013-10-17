@@ -8,5 +8,5 @@ pytz
 pysolarized
 raven
 nltk
-pyramid_beaker
+dogpile.cache
 pylibmc

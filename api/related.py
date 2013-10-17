@@ -1,16 +1,21 @@
 from cornice import Service
+from db.cache import get_cache
 from pysolarized import solr, from_solr_date
 import settings
 
 related_query = Service(name="related", path="/news/related/", description="Returns related news to passed result")
+cache = get_cache()
 
 @related_query.get()
 def get_related(request):
 
     if "id" not in request.GET:
         return {"error": "missing id parameter"}
-
     id = request.GET["id"]
+    return build_related(id)
+
+@cache.cache_on_arguments()
+def build_related(id):
     solr_int = solr.Solr(settings.SOLR_ENDPOINT_URLS, settings.SOLR_DEFAULT_ENDPOINT)
     results = solr_int.more_like_this("id:%s" % id, ["title", "content"], ["id",
                                                                            "title",
@@ -44,4 +49,3 @@ def get_related(request):
 
     r = {u"results": documents}
     return r
-

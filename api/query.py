@@ -1,8 +1,7 @@
-from beaker import cache
-from beaker.cache import cache_region
 from cornice import Service
 import db
 from db.news import NewsItem
+from db.cache import get_cache
 from requests import Session
 import settings
 import mining.summarizer
@@ -18,6 +17,7 @@ details = Service(name="news_details", path="/news/detail/", description="Return
 query_suggest = Service(name="news_query_suggest", path="/news/suggest/query", description="Returns query suggestions")
 
 summarizer = mining.summarizer.Summarizer()
+cache = get_cache()
 
 PAGE_SIZE = 30
 
@@ -25,7 +25,7 @@ PAGE_SIZE = 30
 def get_latest(request):
     return build_latest_news()
 
-@cache_region('news', 'latest_news')
+@cache.cache_on_arguments()
 def build_latest_news():
     results = query_for("*", 0, None, True)
     # Hide facets and fix count
@@ -71,8 +71,7 @@ def get_query_suggestions(request):
     query = request.GET[u"q"]
     return build_query_suggestions(query)
 
-
-@cache_region('news', 'suggest')
+@cache.cache_on_arguments()
 def build_query_suggestions(query):
     suggest_url = settings.SOLR_ENDPOINT_URLS[settings.SOLR_DEFAULT_ENDPOINT] + "suggest"
     parameters = {u"q": query, u"wt": u"json"}
@@ -109,7 +108,7 @@ def get_news(request):
 
     return query_for(request.GET[u"q"], start_index, filters, False)
 
-@cache_region('news', 'query')
+@cache.cache_on_arguments()
 def query_for(query, start_index, filters, with_content):
     solr_int = solr.Solr(settings.SOLR_ENDPOINT_URLS, settings.SOLR_DEFAULT_ENDPOINT)
     results = solr_int.query(query, sort=["published desc"], start=start_index, rows=PAGE_SIZE, filters=filters)

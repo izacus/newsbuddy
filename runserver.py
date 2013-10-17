@@ -5,13 +5,8 @@ from pyramid.config import Configurator
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
-    config = Configurator(settings={
-        'cache.regions': 'news',
-        'cache.type': 'memory',
-        'cache.news.expires': '7200'
-    })
+    config = Configurator()
     config.include('cornice')
-    config.include('pyramid_beaker')
     api.register(config)
     config.add_static_view('', 'ui')
     app = config.make_wsgi_app()

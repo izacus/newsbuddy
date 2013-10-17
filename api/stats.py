@@ -1,20 +1,22 @@
 import logging
 from datetime import datetime, timedelta
-from beaker.cache import cache_region, cache_managers
+from api.query import build_latest_news
 from cornice import Service
 import db
+from db.cache import get_cache
 from db.news import NewsItem
 from sqlalchemy import func, extract
 
 logger = logging.getLogger("api.stats")
 
 stats_service = Service(name="news_stats", path="/news/stats/", description="Returns news statistics")
+cache = get_cache()
 
 @stats_service.get()
 def get_stats(request):
     return build_stats()
 
-@cache_region('news', 'stats')
+@cache.cache_on_arguments()
 def build_stats():
     try:
         db_session = db.news.get_db_session()
@@ -59,6 +61,7 @@ def build_stats():
 
 @stats_service.delete()
 def delete_stats(request):
-    for _cache in cache_managers.values():
-        _cache.clear()
-    return None
+    cache.invalidate(True)
+    # Re-heat cache
+    build_stats()
+    build_latest_news()
