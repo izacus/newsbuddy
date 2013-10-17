@@ -48,8 +48,11 @@ def get_details(request):
         return {u"error": u"Missing id query parameter."}
 
     id = request.GET["id"]
-    db_session = db.news.get_db_session()
+    return build_details(id)
 
+@cache.cache_on_arguments()
+def build_details(id):
+    db_session = db.news.get_db_session()
     try:
         item = db_session.query(NewsItem).filter(NewsItem.id == id).one()
     except NoResultFound:
