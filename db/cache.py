@@ -13,6 +13,8 @@ def get_cache():
             expiration_time=7200,
             arguments={
                 'url': [settings.MEMCACHED_URL]
+                'binary':True,
+                'behaviors':{"tcp_nodelay": True,"ketama":True}
             }
         )
     else:
