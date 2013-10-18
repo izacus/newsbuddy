@@ -10,3 +10,4 @@ raven
 nltk
 dogpile.cache
 pylibmc
+Sphinx

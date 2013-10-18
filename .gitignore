@@ -13,3 +13,6 @@
 
 # ignore the settings (there is a example)
 settings.py
+
+# ignore builded documentation
+/doc/build
