@@ -26,12 +26,12 @@ make
 mvn compile
 
 # cp so
-cd bin
-ln -s $(pwd)/libLemmatizer.so ../../
+cd ..
+ln $(pwd)/slovene_lemmatizer/bin/libLemmatizer.so
+ln $(pwd)/slovene_lemmatizer/bin/lemmatizer lemmatizer_lib
 
 # lets make a jar
-cd ..
-cd target/classes
+cd slovene_lemmatizer/target/classes
 jar cf sl_lemmatizer-1.0.jar si
 cd ../../..
 
