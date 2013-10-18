@@ -36,7 +36,6 @@ class SiolScraper(object):
             article["source_url"] = link
             article["language"] = "si"
             article["id"] = get_sha_hash(link)
-            print article
             news.append(article)
 
         return news
