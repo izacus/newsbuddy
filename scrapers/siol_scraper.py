@@ -3,7 +3,7 @@ from lxml import etree
 import feedparser
 from scrapers.utils import time_to_datetime, get_hash, get_sha_hash, get_article
 
-logger = logging.getLogger("scraper.finance")
+logger = logging.getLogger("scraper.siol")
 
 class SiolScraper(object):
     """
