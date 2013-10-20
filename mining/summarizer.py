@@ -1,6 +1,6 @@
 from collections import defaultdict
 import operator
-from lemmatizer.sllematizer import RdrLemmatizer
+from lemmagen.lemmatizer import Lemmatizer
 import nltk.data
 from nltk import FreqDist
 from nltk.tokenize import word_tokenize
@@ -13,7 +13,7 @@ class Summarizer():
 
     def __init__(self):
         this_dir = os.path.dirname(os.path.abspath(__file__))
-        self.lemmatizer = RdrLemmatizer(os.path.join(this_dir, "lemmatizer/lem-me-sl.bin"))
+        self.lemmatizer = Lemmatizer()
         dir = os.path.join(this_dir, "tokenizers/slovene.pickle")
         self.sent_detector = nltk.data.load("file://" + dir)
 
