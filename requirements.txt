@@ -1,6 +1,7 @@
 requests
 feedparser
 beautifulsoup4
+lxml
 sqlalchemy
 pyramid
 cornice

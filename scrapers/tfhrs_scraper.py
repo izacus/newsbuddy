@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 import logging
-import bs4
+import lxml.html
+import re
+from lxml import etree
 import feedparser
+import nltk
 from scrapers.utils import time_to_datetime, get_hash, get_article, get_sha_hash
 
 logger = logging.getLogger("scraper.24ur")
@@ -46,23 +49,30 @@ class TwentyFourHrsScraper(object):
         article_html = get_article(link.replace("24ur.com", "www.24ur.com"))
         result = {}
 
-        article = bs4.BeautifulSoup(article_html)
+        tree = etree.fromstring(article_html, etree.HTMLParser())
+        summary = tree.xpath('//div[@class="summary"]/p/text()')
+        result["subtitles"] = summary
 
-        summary = article.find(class_="summary")
-        if summary is not None:
-            result["subtitles"] = summary.text.strip()
-
-        # Try to find author
-        author_container = article.find(class_="containerLeftSide")
-        if author_container is not None:
-            container_text = author_container.text.strip()
-            author = container_text[container_text.rfind('|'):]
-            result["author"] = author
+        author_texts = tree.xpath("//div[@class='containerLeftSide']/text()")
+        author_text = u" ".join(text.strip() for text in author_texts)
+        if u"|" in author_text:
+            author = author_text[author_text.rfind('|'):]
         else:
-            result["author"] = None
+            author = None
 
-        text = article.find(id="content")
-        result["text"] = text.text.strip()
+        result["author"] = author
+
+        # Elaborate way of getting rid of all script tags and other garbage in this HTML. Looking for
+        # a better way.
+        content = tree.xpath("//div[@id='content']")
+        if len(content) == 0:
+            return None
+
+
+        print content
+
+        text = re.sub("\s\s+", " ", nltk.clean_html(lxml.html.tostring(content[0], encoding="utf-8").decode("utf-8")))
+        result["text"] = text
         if u"Preverite vpisani naslov ali uporabite možnost iskanja po naših straneh." in result["text"]:
             return None
         return result
