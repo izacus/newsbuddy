@@ -3,7 +3,7 @@ google.load("visualization", "1", { packages: ["corechart"]});
 function StatsController($scope, $http, $filter) {
     $scope.stats = { "total_news" : 0, "news_today": 0 };
 
-    $http.get('/news/stats/').success(function data(data) {
+    $http.get('/v1/news/stats/').success(function data(data) {
         $scope.stats = data;
 
 

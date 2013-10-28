@@ -28,7 +28,7 @@ function SearchController($scope, $http, $location) {
 
     $scope.loadLatestNews = function() {
         $scope.loading = true;
-        $http.get('/news/latest/').success(function data(data) {
+        $http.get('/v1/news/latest/').success(function data(data) {
             $scope.loading = false;
             $scope.all_loaded = true;
             applyResults(data["results"]);
@@ -41,7 +41,7 @@ function SearchController($scope, $http, $location) {
             return;
 
         $scope.loading = true;
-        var url = '/news/query/?offset=' + $scope.offset + '&q=' + $scope.query;
+        var url = '/v1/news/query/?offset=' + $scope.offset + '&q=' + $scope.query;
         for (var filter in $scope.search_filters) {
             if ($scope.search_filters.hasOwnProperty(filter)) {
                 url += "&" + filter + "=" + encodeURIComponent($scope.search_filters[filter]);

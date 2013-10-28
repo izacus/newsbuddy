@@ -2,8 +2,8 @@
 function DetailsController($scope, $routeParams, $http) {
     $scope.loading = true;
 
-    var details_url = '/news/detail/?id=' + $routeParams.resultId;
-    var related_url = '/news/related/?id=' + $routeParams.resultId;
+    var details_url = '/v1/news/detail/?id=' + $routeParams.resultId;
+    var related_url = '/v1/news/related/?id=' + $routeParams.resultId;
 
     $http.get(details_url).success(function data(data) {
         $scope.news_item = data;

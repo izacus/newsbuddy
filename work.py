@@ -46,6 +46,6 @@ if __name__ == "__main__":
         db.news.store_news(news)
         if settings.SOLR_ENDPOINT_URLS is not None:
             dispatch_to_solr(news)
-        requests.delete(settings.LOCAL_URL + "/news/stats/")
+        requests.delete(settings.LOCAL_URL + "/v1/news/stats/")
     except Exception as e:
         logger.error("Failed to process work packet!", exc_info=True)

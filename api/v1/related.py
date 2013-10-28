@@ -3,7 +3,7 @@ from db.cache import get_cache
 from pysolarized import solr, from_solr_date
 import settings
 
-related_query = Service(name="related", path="/news/related/", description="Returns related news to passed result")
+related_query = Service(name="related", path="/v1/news/related/", description="Returns related news to passed result")
 cache = get_cache()
 
 @related_query.get()

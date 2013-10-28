@@ -1,15 +1,18 @@
 import logging
 from datetime import datetime, timedelta
-from api.query import build_latest_news
+from sqlalchemy import func, extract
+
 from cornice import Service
+
+from api.v1.query import build_latest_news
 import db
 from db.cache import get_cache
 from db.news import NewsItem
-from sqlalchemy import func, extract
+
 
 logger = logging.getLogger("api.stats")
 
-stats_service = Service(name="news_stats", path="/news/stats/", description="Returns news statistics")
+stats_service = Service(name="news_stats", path="/v1/news/stats/", description="Returns news statistics")
 cache = get_cache()
 
 @stats_service.get()

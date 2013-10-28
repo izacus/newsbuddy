@@ -11,10 +11,10 @@ from sqlalchemy.orm.exc import NoResultFound
 
 req_session = Session()
 
-news_query = Service(name="news_query", path="/news/query/", description="Returns news matching the query")
-latest = Service(name="latest_news", path="/news/latest/", description="Returns latest collected news")
-details = Service(name="news_details", path="/news/detail/", description="Returns detail about a news document")
-query_suggest = Service(name="news_query_suggest", path="/news/suggest/query", description="Returns query suggestions")
+news_query = Service(name="news_query", path="/v1/news/query/", description="Returns news matching the query")
+latest = Service(name="latest_news", path="/v1/news/latest/", description="Returns latest collected news")
+details = Service(name="news_details", path="/v1/news/detail/", description="Returns detail about a news document")
+query_suggest = Service(name="news_query_suggest", path="/v1/news/suggest/query", description="Returns query suggestions")
 
 summarizer = mining.summarizer.Summarizer()
 cache = get_cache()
