@@ -77,6 +77,9 @@ function SearchController($scope, $http, $location) {
             delete $scope.search_filters[field];
         }
         else {
+            if (field === "published" && value === "Prej")
+                value = "before";
+
             $scope.search_filters[field] = value;
         }
 

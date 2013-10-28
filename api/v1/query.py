@@ -1,4 +1,5 @@
 from cornice import Service
+import datetime
 import db
 from db.news import NewsItem
 from db.cache import get_cache
@@ -105,7 +106,12 @@ def get_news(request):
     if u"published" in request.GET or u"source" in request.GET:
         filters = {}
         if u"published" in request.GET:
-            filters[u"published"] = "[" + request.GET[u"published"] + " TO " + request.GET[u"published"] + "+1DAYS]"
+            if request.GET[u"published"] == u"before":
+                now = datetime.datetime.utcnow()
+                up_to_date = datetime.date(year=now.year, month=now.month - 1, day=1)
+                filters[u"published"] = "[* TO " + up_to_date.strftime("%Y-%m-%dT00:00:00Z") + "]"
+            else:
+                filters[u"published"] = "[" + request.GET[u"published"] + " TO " + request.GET[u"published"] + "+1DAYS]"
         if u"source" in request.GET:
             filters[u"source"] = request.GET[u"source"]
 
