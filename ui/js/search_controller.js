@@ -153,15 +153,20 @@ function SearchController($scope, $http, $location) {
             var publishedFacets = facets["published"];
             publishedFacets.sort(function (a,b) {
                 if (a[0] > b[0])
-                    return 1;
-                else if (a[0] < b[0])
                     return -1;
+                else if (a[0] < b[0])
+                    return 1;
                 else
                     return 0;
             });
 
             if (publishedFacets.length > 0 && publishedFacets[0][0] == "before")
-                publishedFacets[0][0] = "Prej";     // Don't leave "before" marker in the published facet
+            {
+                publishedFacets[0][0] = "Prej";     // Rename "before" Solr marker to Slovenian "Prej"
+                // This moves the marker to last place where it should be
+                var element = publishedFacets.shift();
+                publishedFacets.push(element);
+            }
 
             $scope.publish_dates = publishedFacets;
         }
