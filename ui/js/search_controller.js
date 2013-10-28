@@ -153,9 +153,9 @@ function SearchController($scope, $http, $location) {
             var publishedFacets = facets["published"];
             publishedFacets.sort(function (a,b) {
                 if (a[0] > b[0])
-                    return -1;
-                else if (a[0] < b[0])
                     return 1;
+                else if (a[0] < b[0])
+                    return -1;
                 else
                     return 0;
             });
