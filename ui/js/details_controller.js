@@ -1,5 +1,4 @@
-
-function DetailsController($scope, $routeParams, $http) {
+angular.module("NewsBuddy").controller("DetailsController", ["$scope", "$routeParams", "$http", function($scope, $routeParams, $http) {
     $scope.loading = true;
 
     var details_url = '/v1/news/detail/?id=' + $routeParams.resultId;
@@ -14,4 +13,4 @@ function DetailsController($scope, $routeParams, $http) {
         $scope.loading = false;
         $scope.related_news = data.results;
     });
-}
+}]);

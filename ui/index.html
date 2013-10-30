@@ -21,22 +21,17 @@
     </div>
 
     <div class="container" ng-view></div>
+    
 
-    <!-- JavaScript plugins (requires jQuery) -->
+
     <script src="http://code.jquery.com/jquery.min.js"></script>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/angular.min.js"></script>
-    <script src="js/angular-locale_sl-si.js"></script>
-    <script src="js/angular-route.min.js"></script>
-    <script src="js/angular-sanitize.min.js"></script>
-    <script src="js/ng-infinite-scroll.min.js"></script>
-    <script src="js/typeahead.min.js"></script>
-    <script src="js/angular-typeahead.js"></script>
-    <script src="js/search_controller.js"></script>
-    <script src="js/stats_controller.js"></script>
-    <script src="js/details_controller.js"></script>
-    <script src="js/news_buddy.js"></script>
+    <script src="dist/nb.min.js"></script>
+
+    <script>
+        if (!window.news_buddy) {
+            document.write('<script src="js/bootstrap.min.js">\x3C/script> <script src="js/angular.min.js" />\x3c/script>\x3cscript src="js/angular-locale_sl-si.js">\x3c/script>\x3cscript src="js/angular-route.min.js">\x3c/script>\x3cscript src="js/angular-sanitize.min.js">\x3c/script>\x3cscript src="js/ng-infinite-scroll.min.js">\x3c/script>\x3cscript src="js/typeahead.min.js">\x3c/script>\x3cscript src="js/angular-typeahead.js">\x3c/script>\x3cscript src="js/news_buddy.js">\x3c/script>\x3cscript src="js/search_controller.js">\x3c/script>\x3cscript src="js/stats_controller.js">\x3c/script>\x3cscript src="js/details_controller.js">\x3c/script>');
+        };
+    </script>
   </body>
 </html>

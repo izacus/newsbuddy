@@ -1,4 +1,4 @@
-function SearchController($scope, $http, $location) {
+angular.module("NewsBuddy").controller("SearchController", ["$scope", "$http", "$location", function($scope, $http, $location) {
 
     $scope.query = null;
 
@@ -198,4 +198,4 @@ function SearchController($scope, $http, $location) {
     {
         $scope.loadLatestNews();
     }
-};
+}]);

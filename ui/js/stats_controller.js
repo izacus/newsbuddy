@@ -1,6 +1,5 @@
-google.load("visualization", "1", { packages: ["corechart"]});
-
-function StatsController($scope, $http, $filter) {
+angular.module("NewsBuddy").controller("StatsController", ["$scope", "$http", function($scope, $http) {
+    google.load("visualization", "1", { packages: ["corechart"]});
     $scope.stats = { "total_news" : 0, "news_today": 0 };
 
     $http.get('/v1/news/stats/').success(function data(data) {
@@ -71,7 +70,5 @@ function StatsController($scope, $http, $filter) {
 
         var sources_today_chart = new google.visualization.BarChart(document.getElementById('news-by-source-today'));
         sources_today_chart.draw(sources_today_data, options);
-
-
     });
-};
+}]);
