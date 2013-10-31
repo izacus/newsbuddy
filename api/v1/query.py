@@ -65,7 +65,8 @@ def build_details(id):
         u"author": item.author,
         u"published": str(item.published.isoformat()) + "Z",
         u"source": item.source,
-        u"link": item.source_url
+        u"link": item.source_url,
+        u"content": item.content
     }
 
 @query_suggest.get()

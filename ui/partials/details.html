@@ -8,18 +8,26 @@
         <h4>Vir: {{ news_item.source }}</h4>
     </div>
 </div>
-
+<div class="row" ng-show="news_item.content">
+    <br />
+    <h4>
+        Vsebina
+    </h4>
+    <hr>
+    {{ news_item.content }}
+</div>
 <div class="row" ng-show="related_news">
-    <h3>
+    <br />
+    <h4>
         Podobne novice
-    </h3>
+    </h4>
     <hr>
 </div>
 <div class="row" ng-hide="related_news || loading">
     <hr>
-    <h4>
+    <h5>
         Ni bilo najdenih podobnih novic.
-    </h4>
+    </h5>
 </div>
 <div class="row" data-ng-repeat="related in related_news" ng-show="related_news">
     <a href="{{related.link}}"><span ng-bind-html="related.title"></span></a> | <small>{{ related.source }};  {{ related.published | date:'mediumDate' }} {{ related.published | date:'shortTime' }}</small>
