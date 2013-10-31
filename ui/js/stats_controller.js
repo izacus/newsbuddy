@@ -1,5 +1,5 @@
+google.load("visualization", "1", { packages: ["corechart"]});
 angular.module("NewsBuddy").controller("StatsController", ["$scope", "$http", function($scope, $http) {
-    google.load("visualization", "1", { packages: ["corechart"]});
     $scope.stats = { "total_news" : 0, "news_today": 0 };
 
     $http.get('/v1/news/stats/').success(function data(data) {
