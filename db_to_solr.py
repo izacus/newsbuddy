@@ -1,4 +1,5 @@
 import logging
+from sqlalchemy import func
 import settings
 import db.news
 import pytz
@@ -13,6 +14,7 @@ if __name__ == "__main__":
     # Now iterate over news
     docs = []
     count = 0
+    total = db.news.get_db_session().query(func.count(db.news.NewsItem.id)).scalar()
     for news_item in db.news.get_news():
         doc = {u"id": news_item.id, u"title": news_item.title,
                u"source": news_item.source, u"language": u"si",
@@ -25,6 +27,12 @@ if __name__ == "__main__":
         solr_int.add(doc)
         count += 1
 
-    solr_int.commit()
+        if count % 100 == 0:
+            print "%s/%s" % (count, total)
 
+    print "%s/%s" % (count, total)
+    print "Commiting..."
+    solr_int.commit()
+    print "Running solr defrag..."
+    solr_int.optimize()
     print "Dispached " + str(count) + " documents to solr. "
