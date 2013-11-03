@@ -13,3 +13,4 @@ dogpile.cache
 pylibmc
 Sphinx
 Lemmagen
+alembic
