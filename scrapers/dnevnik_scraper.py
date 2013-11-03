@@ -1,6 +1,6 @@
 import bs4
 import feedparser
-from scrapers.utils import time_to_datetime, get_hash, get_article, get_sha_hash
+from scrapers.utils import time_to_datetime, get_hash, get_article, get_sha_hash, get_rss
 import logging
 
 logger = logging.getLogger("scraper.dnevnik")
@@ -11,7 +11,7 @@ class DnevnikScraper(object):
 
     def get_news(self, existing_ids=None):
         news = []
-        feed_content = feedparser.parse(self.DNEVNIK_RSS_URL)
+        feed_content = get_rss(self.DNEVNIK_RSS_URL)
 
         max_counter = 30
         for feed_entry in feed_content.entries:
@@ -46,7 +46,7 @@ class DnevnikScraper(object):
         logger.debug("Grabbing article %s", link)
         article_html = get_article(link)
         result = {}
-
+        result["raw_html"] = article_html
         article = bs4.BeautifulSoup(article_html)
         
         author = article.body.find(class_="article-source")

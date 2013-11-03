@@ -1,7 +1,7 @@
 from lxml import etree
 import bs4
 import feedparser
-from scrapers.utils import time_to_datetime, get_hash, get_article, get_sha_hash
+from scrapers.utils import time_to_datetime, get_hash, get_article, get_sha_hash, get_rss
 import logging
 
 logger = logging.getLogger("scraper.demokracija")
@@ -15,7 +15,7 @@ class DemokracijaScraper(object):
 
     def get_news(self, existing_ids=None):
         news = []
-        feed_content = feedparser.parse(self.DEMOKRACIJA_RSS_URL)
+        feed_content = get_rss(self.DEMOKRACIJA_RSS_URL)
 
         max_counter = 30
         for feed_entry in feed_content.entries:
@@ -51,7 +51,7 @@ class DemokracijaScraper(object):
         logger.debug("Grabbing article %s", link)
         article_html = get_article(link)
         result = {}
-
+        result["raw_html"] = article_html
         tree = etree.fromstring(article_html, etree.HTMLParser())
         result["text"] = '\n'.join(tree.xpath('//div[@class="article"]/p[string-length(@class) = 0]//text()'))
         result["subtitles"] = [text.strip() for text in tree.xpath('//div[@class="article"]/p/strong/text()')]

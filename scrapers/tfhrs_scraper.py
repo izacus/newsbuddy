@@ -5,7 +5,7 @@ import re
 from lxml import etree
 import feedparser
 import nltk
-from scrapers.utils import time_to_datetime, get_hash, get_article, get_sha_hash
+from scrapers.utils import time_to_datetime, get_hash, get_article, get_sha_hash, get_rss
 
 logger = logging.getLogger("scraper.24ur")
 
@@ -15,7 +15,7 @@ class TwentyFourHrsScraper(object):
 
     def get_news(self, existing_ids=None):
         news = []
-        feed_content = feedparser.parse(self.TFH_RSS_URL)
+        feed_content = get_rss(self.TFH_RSS_URL)
         for feed_entry in feed_content.entries:
             link = feed_entry["link"]
 
@@ -48,7 +48,7 @@ class TwentyFourHrsScraper(object):
 
         article_html = get_article(link.replace("24ur.com", "www.24ur.com"))
         result = {}
-
+        result["raw_html"] = article_html
         tree = etree.fromstring(article_html, etree.HTMLParser())
         summary = tree.xpath('//div[@class="summary"]/p/text()')
         result["subtitles"] = summary
@@ -67,9 +67,6 @@ class TwentyFourHrsScraper(object):
         content = tree.xpath("//div[@id='content']")
         if len(content) == 0:
             return None
-
-
-        print content
 
         text = re.sub("\s\s+", " ", nltk.clean_html(lxml.html.tostring(content[0], encoding="utf-8").decode("utf-8")))
         result["text"] = text

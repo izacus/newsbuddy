@@ -1,7 +1,7 @@
 import logging
 import bs4
 import feedparser
-from scrapers.utils import time_to_datetime, get_hash, get_article, get_sha_hash
+from scrapers.utils import time_to_datetime, get_hash, get_article, get_sha_hash, get_rss
 
 logger = logging.getLogger("scraper.vecer")
 
@@ -11,7 +11,7 @@ class VecerScraper(object):
 
     def get_news(self, existing_ids=None):
         news = []
-        feed_content = feedparser.parse(self.VECER_RSS_URL)
+        feed_content = get_rss(self.VECER_RSS_URL)
         for feed_entry in feed_content.entries:
             link = feed_entry["link"]
 
@@ -44,7 +44,7 @@ class VecerScraper(object):
 
         article_html = get_article(link)
         result = {}
-
+        result["raw_html"] = article_html
         article = bs4.BeautifulSoup(article_html)
 
         # Try to find the subtitle

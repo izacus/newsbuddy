@@ -15,8 +15,8 @@ import sqlalchemy as sa
 
 
 def upgrade():
-    pass
+    op.create_index('news_source', 'news', ['source'])
 
 
 def downgrade():
-    pass
+    op.drop_index('news_source')

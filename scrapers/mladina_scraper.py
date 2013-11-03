@@ -1,7 +1,7 @@
 import logging
 import bs4
 import feedparser
-from scrapers.utils import get_hash, time_to_datetime, get_article, get_sha_hash
+from scrapers.utils import get_hash, time_to_datetime, get_article, get_sha_hash, get_rss
 
 logger = logging.getLogger("scraper.mladina")
 
@@ -11,7 +11,7 @@ class MladinaScraper(object):
 
     def get_news(self, existing_ids=None):
         news = []
-        feed_content = feedparser.parse(self.MLADINA_RSS)
+        feed_content = get_rss(self.MLADINA_RSS)
         for feed_entry in feed_content.entries:
             link = feed_entry["link"]
 
@@ -42,6 +42,7 @@ class MladinaScraper(object):
 
         result = {}
         article_html = get_article(link)
+        result["raw_html"] = article_html
         article = bs4.BeautifulSoup(article_html)
 
         main_part = article.find(class_="main")

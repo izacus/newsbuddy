@@ -1,7 +1,7 @@
 import logging
 from lxml import etree
 import feedparser
-from scrapers.utils import time_to_datetime, get_hash, get_sha_hash, get_article
+from scrapers.utils import time_to_datetime, get_hash, get_sha_hash, get_article, get_rss
 
 logger = logging.getLogger("scraper.siol")
 
@@ -13,7 +13,7 @@ class SiolScraper(object):
 
     def get_news(self, existing_ids=None):
         news = []
-        feed_content = feedparser.parse(self.SIOL_RSS_URL)
+        feed_content = get_rss(self.SIOL_RSS_URL)
 
         for feed_entry in feed_content.entries:
             link = feed_entry["link"]
@@ -44,7 +44,7 @@ class SiolScraper(object):
         logger.debug("Grabbing article %s", link)
         article_html = get_article(link)
         result = {}
-
+        result["raw_html"] = article_html
         tree = etree.fromstring(article_html, etree.HTMLParser())
 
         # This is a structure for editorials

@@ -1,6 +1,7 @@
+from urllib2 import ProxyHandler
 import bs4
 import feedparser
-from scrapers.utils import get_article, get_hash, time_to_datetime, get_sha_hash
+from scrapers.utils import get_article, get_hash, time_to_datetime, get_sha_hash, get_rss
 import logging
 
 logger = logging.getLogger("scraper.rtvslo")
@@ -15,7 +16,7 @@ class RTVScraper(object):
         news = []
         for rss_feed in self.RTV_RSS_URLS:
             logger.debug("Parsing %s", rss_feed)
-            feed_content = feedparser.parse(rss_feed)
+            feed_content = get_rss(rss_feed)
             for feed_entry in feed_content.entries:
                 # Download article
                 link = feed_entry["link"]
@@ -46,6 +47,7 @@ class RTVScraper(object):
         logger.debug("[RTVSlo] Grabbing article ID %s", article_id)
         article_html = get_article(self.RTV_ARTICLE_URL + str(article_id))
         result = {}
+        result["raw_html"] = article_html
         article = bs4.BeautifulSoup(article_html)
         result["title"] = article.title.text.strip()
 
