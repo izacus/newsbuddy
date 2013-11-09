@@ -1,4 +1,4 @@
-import multiprocessing
+from multiprocessing.pool import ThreadPool
 import itertools
 from scrapers.demokracija_scraper import DemokracijaScraper
 from scrapers.siol_scraper import SiolScraper
@@ -18,7 +18,7 @@ def scrape_news(existing_ids=None):
     scrapers = [DemokracijaScraper(), SiolScraper(), VecerScraper(), FinanceScraper(), MladinaScraper(), TwentyFourHrsScraper(), RTVScraper(), ZurnalScraper(), DeloScraper(), DnevnikScraper()]
     print "Scraping news!"
 
-    pool = multiprocessing.Pool(processes=len(scrapers))
+    pool = ThreadPool(processes=len(scrapers))
     result = pool.map(get_news, itertools.izip(scrapers, itertools.repeat(existing_ids)))
 
     news = [item for sublist in result for item in sublist]

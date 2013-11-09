@@ -24,11 +24,18 @@ PAGE_SIZE = 30
 
 @latest.get()
 def get_latest(request):
-    return build_latest_news()
+    result = build_latest_news()
+    if u"error" in result:
+        build_latest_news.invalidate()
+    return result
 
 @cache.cache_on_arguments()
 def build_latest_news():
     results = query_for("*", 0, None, True)
+
+    if u"error" in results:
+        return results
+
     # Hide facets and fix count
     del results[u"facets"]
     del results[u"offset"]
@@ -76,7 +83,7 @@ def get_query_suggestions(request):
     query = request.GET[u"q"]
     return build_query_suggestions(query)
 
-@cache.cache_on_arguments()
+@cache.cache_on_arguments()         # TODO TODO: Prevent caching of Solr error responses
 def build_query_suggestions(query):
     suggest_url = settings.SOLR_ENDPOINT_URLS[settings.SOLR_DEFAULT_ENDPOINT] + "suggest"
     parameters = {u"q": query, u"wt": u"json"}
@@ -118,7 +125,7 @@ def get_news(request):
 
     return query_for(request.GET[u"q"], start_index, filters, False)
 
-@cache.cache_on_arguments()
+@cache.cache_on_arguments()         # TODO TODO: Prevent caching of Solr error responses
 def query_for(query, start_index, filters, with_content):
     solr_int = solr.Solr(settings.SOLR_ENDPOINT_URLS, settings.SOLR_DEFAULT_ENDPOINT)
     results = solr_int.query(query, sort=["published desc"], start=start_index, rows=PAGE_SIZE, filters=filters)
