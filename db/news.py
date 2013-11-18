@@ -5,6 +5,9 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 Base = declarative_base()
+db_engine = create_engine(settings.DB_CONNECTION_STRING)
+Base.metadata.create_all(db_engine)
+Session = sessionmaker(bind=db_engine)
 
 class NewsItem(Base):
     __tablename__ = "news"
@@ -19,13 +22,7 @@ class NewsItem(Base):
     content = Column(UnicodeText)
     raw_html = Column(UnicodeText)
 
-def create_news_db(engine):
-    Base.metadata.create_all(engine)
-
 def get_db_session():
-    db_engine = create_engine(settings.DB_CONNECTION_STRING)
-    create_news_db(db_engine)
-    Session = sessionmaker(bind=db_engine)
     return Session()
 
 def get_latest_ids(limit=500):
