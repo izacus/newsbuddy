@@ -30,8 +30,8 @@ angular.module("NewsBuddy").controller("StatsController", ["$scope", "$http", fu
         }
 
 
-        var labels = [ null ];
-        var sources_data = [ null ];
+        var labels = [];
+        var sources_data = [];
 
         for (var item in sources) {
             if (sources.hasOwnProperty(item)) {
@@ -40,8 +40,8 @@ angular.module("NewsBuddy").controller("StatsController", ["$scope", "$http", fu
             }
         }
 
-        var labels_today = [ null ];
-        var sources_today_data = [ null ];
+        var labels_today = [ ];
+        var sources_today_data = [ ];
         for (var item in sources_today) {
             if (sources.hasOwnProperty(item)) {
                 labels_today.push(item);
