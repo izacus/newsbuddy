@@ -16,3 +16,11 @@ settings.py
 
 # ignore builded documentation
 /doc/build
+
+# PyCharm project files
+.idea
+.Python
+
+# Ignore node modules and built JavaScript files
+node_modules
+ui/dist
