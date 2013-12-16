@@ -21,5 +21,5 @@
     "grunt-ngmin": "0.0.3"
   },
   "author": "Jernej Virag <jernej@virag.si>",
-  "license": "LGPL"
+  "license": "MIT"
 }
