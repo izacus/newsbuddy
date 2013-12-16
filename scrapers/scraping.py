@@ -5,6 +5,7 @@ from scrapers.monitor_scraper import MonitorScraper
 from scrapers.siol_scraper import SiolScraper
 from scrapers.finance_parser import FinanceScraper
 from scrapers.mladina_scraper import MladinaScraper
+from scrapers.val202_scraper import VAL202Scraper
 from scrapers.vecer_scraper import VecerScraper
 from tfhrs_scraper import TwentyFourHrsScraper
 from rtv_scraper import RTVScraper
@@ -16,8 +17,7 @@ import logging
 logger = logging.getLogger("scraper")
 
 def scrape_news(existing_ids=None):
-    scrapers = [MonitorScraper(), DemokracijaScraper(), SiolScraper(), VecerScraper(), FinanceScraper(), MladinaScraper(), TwentyFourHrsScraper(), RTVScraper(), ZurnalScraper(), DeloScraper(), DnevnikScraper()]
-    #scrapers = [MonitorScraper()]
+    scrapers = [VAL202Scraper(), MonitorScraper(), DemokracijaScraper(), SiolScraper(), VecerScraper(), FinanceScraper(), MladinaScraper(), TwentyFourHrsScraper(), RTVScraper(), ZurnalScraper(), DeloScraper(), DnevnikScraper()]
     print "Scraping news!"
 
     pool = ThreadPool(processes=len(scrapers))
