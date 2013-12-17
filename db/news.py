@@ -6,8 +6,6 @@ from sqlalchemy.orm import sessionmaker
 
 Base = declarative_base()
 db_engine = create_engine(settings.DB_CONNECTION_STRING)
-Base.metadata.create_all(db_engine)
-Session = sessionmaker(bind=db_engine)
 
 class NewsItem(Base):
     __tablename__ = "news"
@@ -21,6 +19,9 @@ class NewsItem(Base):
     source_url = Column(UnicodeText)
     content = Column(UnicodeText)
     raw_html = Column(UnicodeText)
+
+Base.metadata.create_all(db_engine)
+Session = sessionmaker(bind=db_engine)
 
 def get_db_session():
     return Session()
