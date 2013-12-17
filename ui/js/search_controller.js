@@ -41,7 +41,8 @@ angular.module("NewsBuddy").controller("SearchController", ["$scope", "$http", "
             return;
 
         $scope.loading = true;
-        var url = '/v1/news/query/?offset=' + $scope.offset + '&q=' + $scope.query;
+        var path = '/v1/news/query/'
+        var url = path + '?offset=' + $scope.offset + '&q=' + $scope.query;
         for (var filter in $scope.search_filters) {
             if ($scope.search_filters.hasOwnProperty(filter)) {
                 url += "&" + filter + "=" + encodeURIComponent($scope.search_filters[filter]);
@@ -63,6 +64,33 @@ angular.module("NewsBuddy").controller("SearchController", ["$scope", "$http", "
             $scope.offset += data["results"].length;
             if ($scope.offset >= data["total"])
                 $scope.all_loaded = true;
+
+            /* Must add new element - just altering the old one doesn't update
+             * the feed subscribe UI in Firefox. Also, Firefox doesn't remove
+             * old entries from the UI when we delete the <link>.
+             *
+             * Chrome + RSS subscription extension ignore this altogether.
+             *
+             * We check if there is an existing matching element to prevent
+             * cluttering Firefox too much. */
+            var atom_url = path + '?q=' + $scope.query;
+            var exists = 0;
+
+            var links = $('head link[rel="alternate"]');
+            links.each(function(index) {
+                if($(this).attr('href') === atom_url) {
+                    exists = 1;
+                }
+            });
+            links.remove();
+
+            if (!exists) {
+                $('head').append($('<link>', {
+                    'href': atom_url,
+                    'rel': 'alternate',
+                    'type': 'application/atom+xml',
+                    'title': $scope.query + ' - Novičar'}));
+            }
         });
     };
 

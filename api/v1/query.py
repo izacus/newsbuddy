@@ -6,9 +6,11 @@ from db.cache import get_cache
 from requests import Session
 import settings
 import mining.summarizer
+from pyatom import AtomFeed
 from pysolarized import solr
 from pysolarized import from_solr_date
 from sqlalchemy.orm.exc import NoResultFound
+import time
 
 req_session = Session()
 
@@ -22,7 +24,74 @@ cache = get_cache()
 
 PAGE_SIZE = 30
 
-@latest.get()
+class AtomRenderer(object):
+
+    acceptable = ('application/atom+xml', 'application/xml')
+
+    def __init__(self, info):
+        pass
+
+    def add_feed_items(self, feed, results):
+
+        for result in results:
+
+            published = datetime.datetime(*time.strptime(result['published'], "%Y-%m-%dT%H:%M:%SZ")[:6])
+
+            if 'snippet' in result:
+                summary = ''.join('<p>' + p + '</p>' for p in result['snippet'])
+            else:
+                summary = None
+
+            feed.add(title=result['title'],
+                     title_type='html',
+
+                     author=result['source'],
+                     url=result['link'],
+
+                     # Ideally this should be date of crawling (or something).
+                     updated=published,
+
+                     published=published,
+
+                     content=result.get('content'),
+                     content_type='html',
+
+                     summary=summary,
+                     summary_type='html',
+            )
+
+    def __call__(self, data, context):
+        request = context['request']
+        response = request.response
+
+        response.content_type = context['request'].accept.best_match(self.acceptable)
+        if not response.content_type:
+            response.content_type = self.acceptable[0]
+
+        title = u'Novi\u010dar'
+
+        # I'm sure this could be done better...
+        url = request.host_url + '#!/latest'
+
+        query = request.GET.get('q')
+        if query:
+            title = query.strip() + " - " + title
+            url += '#' + query
+
+        # It would be nice to know time of last crawl, so that the "updated"
+        # field for the feed could be set.
+        feed = AtomFeed(title=title,
+                        url=url,
+                        feed_url=request.url)
+
+        if 'results' in data:
+            self.add_feed_items(feed, data['results'])
+
+        return feed.to_string()
+
+
+@latest.get(accept='application/json', renderer='json')
+@latest.get(accept=AtomRenderer.acceptable, renderer='atom')
 def get_latest(request):
     result = build_latest_news()
     if u"error" in result:
@@ -102,7 +171,8 @@ def build_query_suggestions(query):
     return {u"suggestions": suggestions, u"startOffset": start_offest, u"endOffset": end_offset, u"fieldSuggestion": field_fill}
 
 
-@news_query.get()
+@news_query.get(accept='application/json', renderer='json')
+@news_query.get(accept=AtomRenderer.acceptable, renderer='atom')
 def get_news(request):
     if u"q" not in request.GET:
         return {u"error": u"Missing q query parameter."}

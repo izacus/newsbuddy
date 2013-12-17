@@ -14,3 +14,4 @@ pylibmc
 Sphinx
 Lemmagen
 alembic
+pyatom
