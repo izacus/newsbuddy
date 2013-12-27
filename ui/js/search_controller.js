@@ -51,7 +51,7 @@ angular.module("NewsBuddy").controller("SearchController", ["$scope", "$http", "
 
         $location.hash($scope.query);
         $http.get(url).success(function data(data) {
-            $location.hash($scope.query);
+            //$location.hash($scope.query);
             if (!data["results"]) {
                 $scope.loading = false;
                 return;
@@ -115,6 +115,7 @@ angular.module("NewsBuddy").controller("SearchController", ["$scope", "$http", "
     };
 
     $scope.processSuggestions = function(parsedResponse) {
+        console.info(parsedResponse);
         return parsedResponse["suggestions"];
     }
 
@@ -212,6 +213,7 @@ angular.module("NewsBuddy").controller("SearchController", ["$scope", "$http", "
     };
 
     $scope.clearSearch();
+
     $scope.$on("newsbuddy:autocomplete:selected", function(e) {
         $scope.search();
         $scope.$digest();
