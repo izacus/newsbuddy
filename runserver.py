@@ -3,6 +3,7 @@ from wsgiref.simple_server import make_server
 import api
 from api.v1.query import AtomRenderer
 from pyramid.config import Configurator
+from db.cache import get_cache
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
@@ -14,3 +15,7 @@ if __name__ == "__main__":
     app = config.make_wsgi_app()
     server = make_server('0.0.0.0', 8005, app)
     server.serve_forever()
+
+    # Clear memcached cache on startup
+    cache = get_cache()
+    cache.invalidate(True)
