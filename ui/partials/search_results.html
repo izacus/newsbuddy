@@ -29,11 +29,13 @@
             <ul>
                 <li class="list-unstyled" data-ng-repeat="result in result_group.articles">
                     <h4>
-                        <a href="{{result.link}}"><span ng-bind-html="result.title"></span></a><a href="/#!/detail/{{ result.id }}" class="btn btn-primary btn-xs pull-right">Podobno</a><br/>
+                        <a href="{{result.link}}"><span ng-bind-html="result.title"></span></a><br/>
                         <small>{{ result.source }};  {{ result.published | date:'mediumDate' }} {{ result.published | date:'shortTime' }}</small>
                     </h4>
                     <p data-ng-repeat="snippet in result.snippet">... <span ng-bind-html="snippet"></span> ...</p>
+                    <a href="/#!/detail/{{ result.id }}" class="btn btn-xs pull-right">Podrobno</a>
                     <br />
+                    <hr>
                 </li>
             </ul>
         </div>
