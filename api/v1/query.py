@@ -29,14 +29,18 @@ PAGE_SIZE = 30
 @latest.get(accept='application/json', renderer='json')
 @latest.get(accept=AtomRenderer.acceptable, renderer='atom')
 def get_latest(request):
-    result = build_latest_news()
+    offset = 0
+    if u"offset" in request.GET:
+        offset = int(request.GET["offset"])
+
+    result = build_latest_news(offset)
     if u"error" in result:
         build_latest_news.invalidate()
     return result
 
 @cache.cache_on_arguments()
-def build_latest_news():
-    results = query_for("*", 0, None, True)
+def build_latest_news(offset):
+    results = query_for("*", offset, None, True)
 
     if u"error" in results:
         return results

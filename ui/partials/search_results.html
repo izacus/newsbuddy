@@ -22,7 +22,7 @@
 
 <br />
 <div class="row">
-    <div class="col-md-10" infinite-scroll="loadPage();" infinite-scroll-disabled="loading || all_loaded" infinite-scroll-distance="2">
+    <div class="col-md-10" infinite-scroll="loadInfinite();" infinite-scroll-disabled="loading || all_loaded" infinite-scroll-distance="2">
         <div data-ng-repeat="result_group in results_array" ng-show="results_array">
             <h3 class="text-center">{{ result_group.published | date:'mediumDate' }}</h3>
             <hr>
@@ -62,7 +62,7 @@
         </li>
         </ul>
     </div>
-    <div class="progress progress-striped active col-md-14" ng-show="loading">
+    <div class="row progress progress-striped active col-md-14" ng-show="loading">
         <div class="progress-bar" style="width: 100%"></div>
     </div>
 </div>

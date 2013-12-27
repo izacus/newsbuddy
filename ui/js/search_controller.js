@@ -1,5 +1,7 @@
 angular.module("NewsBuddy").controller("SearchController", ["$scope", "$http", "$location", function($scope, $http, $location) {
 
+    var MAX_LATEST_NEWS = 500;
+
     $scope.query = null;
 
     $scope.clearSearch = function() {
@@ -26,12 +28,25 @@ angular.module("NewsBuddy").controller("SearchController", ["$scope", "$http", "
         $scope.loadPage();
     };
 
+    $scope.loadInfinite = function() {
+        if ($scope.query) {
+            $scope.loadPage();
+        }
+        else {
+            $scope.loadLatestNews();
+        }
+    }
+
     $scope.loadLatestNews = function() {
+        if ($scope.loading || $scope.offset > MAX_LATEST_NEWS)
+            return;
+
         $scope.loading = true;
-        $http.get('/v1/news/latest/').success(function data(data) {
+        $scope.all_loaded = false;
+        $http.get('/v1/news/latest/?offset=' + $scope.offset).success(function data(data) {
             $scope.loading = false;
-            $scope.all_loaded = true;
             applyResults(data["results"]);
+            $scope.offset += data["results"].length;
         });
     }
 
@@ -51,7 +66,6 @@ angular.module("NewsBuddy").controller("SearchController", ["$scope", "$http", "
 
         $location.hash($scope.query);
         $http.get(url).success(function data(data) {
-            //$location.hash($scope.query);
             if (!data["results"]) {
                 $scope.loading = false;
                 return;
