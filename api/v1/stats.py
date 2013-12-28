@@ -67,4 +67,4 @@ def delete_stats(request):
     cache.invalidate(True)
     # Re-heat cache
     build_stats()
-    build_latest_news()
+    build_latest_news(0)
