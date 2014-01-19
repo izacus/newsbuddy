@@ -1,6 +1,9 @@
 import json
+import logging
 import requests
 import settings
+
+logger = logging.getLogger("entityextractor")
 
 
 class EntityExtractor():
@@ -14,6 +17,7 @@ class EntityExtractor():
 
         response = requests.post(self.tag_url, data=json.dumps({"text": text}))
         if response.status_code != requests.codes.ok:
+            logger.warning("Failed to access NER service: [%d] %s" % (response.status_code, response.content, ))
             return None
 
         # Process tags now
