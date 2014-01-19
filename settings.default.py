@@ -7,3 +7,5 @@ SOLR_ENDPOINT_URLS = { "si" : "http://localhost:8983/solr/news/"}
 SOLR_DEFAULT_ENDPOINT = "si"
 # Url of memcached server for caching
 MEMCACHED_URL = None
+# Url of NER service
+NER_SERVICE_URL = None

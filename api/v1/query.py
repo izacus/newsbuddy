@@ -11,6 +11,7 @@ from db.news import NewsItem
 from db.cache import get_cache
 from api.v1.atom_renderer import AtomRenderer
 import mining.summarizer
+import mining.entity_extractor
 
 
 req_session = Session()
@@ -21,6 +22,7 @@ details = Service(name="news_details", path="/v1/news/detail/", description="Ret
 query_suggest = Service(name="news_query_suggest", path="/v1/news/suggest/query", description="Returns query suggestions")
 
 summarizer = mining.summarizer.Summarizer()
+entity_extractor = mining.entity_extractor.EntityExtractor()
 cache = get_cache()
 
 PAGE_SIZE = 30
@@ -75,6 +77,8 @@ def build_details(id):
     except NoResultFound:
         return {u"error": u"Document matching id was not found."}
 
+    tags = entity_extractor.tag(item.content)
+
     return {
         u"id": item.id,
         u"title": item.title,
@@ -82,7 +86,8 @@ def build_details(id):
         u"published": str(item.published.isoformat()) + "Z",
         u"source": item.source,
         u"link": item.source_url,
-        u"content": item.content
+        u"content": item.content,
+        u"tags": tags
     }
 
 @query_suggest.get()
