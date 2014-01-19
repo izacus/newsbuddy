@@ -6,7 +6,19 @@ angular.module("NewsBuddy").controller("DetailsController", ["$scope", "$routePa
 
     $http.get(details_url).success(function data(data) {
         $scope.news_item = data;
-        console.info(data);
+
+        if (data["tags"]) {
+            var tags = []
+            for (var i = 0; i < data["tags"].length; i++) {
+                tags.push({ "id": i, "word" : data["tags"][i][0], "tag": data["tags"][i][1]});
+            }
+
+            $scope.tags = tags;
+        }
+        else {
+            $scope.tags = null;
+        }
+
     })
 
     $http.get(related_url).success(function data(data){
