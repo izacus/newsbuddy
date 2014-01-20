@@ -116,6 +116,10 @@ Minifying JavaScript increases Newsbuddy performance on the clientside. For JS c
 - node.js
 - Grunt
 
+Before running grunt on newsbuddy for the first time::
+
+    npm install
+
 To compile JS run::
 
     grunt
