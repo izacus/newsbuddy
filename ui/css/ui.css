@@ -79,3 +79,10 @@
 .tt-suggestion p {
     margin: 0;
 }
+
+.label-block {
+    display: inline-block;
+    margin: 2px;
+    padding: .4em .6em .4em;
+    height: 100%;
+}
