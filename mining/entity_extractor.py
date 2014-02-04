@@ -24,12 +24,12 @@ class EntityExtractor():
         last_tag = None
         last_entity = ""
 
-        tags = []
+        tags = set()
 
         for word in response.json():
             tag = word[u"tag"] if u"tag" in word else None
             if tag != last_tag and last_tag is not None:
-                tags.append((last_entity.strip(), last_tag))
+                tags.add((last_entity.strip(), last_tag))
                 last_entity = ""
 
             if tag is not None:
@@ -40,4 +40,4 @@ class EntityExtractor():
         if len(tags) == 0:
             return None
 
-        return tags
+        return list(tags)
