@@ -1,13 +1,12 @@
+from sqlalchemy.orm import relationship
 import db
+import tags
 import pytz
 from sqlalchemy import Column, String, UnicodeText, DateTime,  desc, Index
-from sqlalchemy.ext.declarative import declarative_base
 
-Base = declarative_base()
-
-class NewsItem(Base):
+class NewsItem(db.Base):
     __tablename__ = "news"
-    __table_args__ = ( Index('news_published', 'published'), Index('news_source', 'source'), )
+    __table_args__ = (Index('news_published', 'published'), Index('news_source', 'source'), )
 
     id = Column(String(128), primary_key=True)
     title = Column(UnicodeText)
@@ -18,9 +17,11 @@ class NewsItem(Base):
     content = Column(UnicodeText)
     raw_html = Column(UnicodeText)
 
+    tags = relationship('Tag', secondary=tags.news_tag_table)
+
 def get_latest_ids(limit=500):
     db_sesion = db.get_db_session()
-    existsing_ids = set(id[0] for id in db_sesion.query(NewsItem.id).order_by(desc(NewsItem.published))[:100])
+    existsing_ids = set(id[0] for id in db_sesion.query(NewsItem.id).order_by(desc(NewsItem.published))[:limit])
     return existsing_ids
 
 def store_news(news):

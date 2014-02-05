@@ -1,8 +1,10 @@
 from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session
 import os
 import settings
 
+Base = declarative_base()
 db_engine = create_engine(settings.DB_CONNECTION_STRING)
 
 def check_create_db():
