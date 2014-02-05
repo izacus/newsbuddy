@@ -82,9 +82,6 @@ e.g.::
 
    DB_CONNECTION_STRING = "postgresql://localhost/news"
    
-Then run initial database migration setup::
-
-  alembic upgrade head
   
 Setup Solr endpoint
 ~~~~~~~~~~~~~~~~~~~~~~

@@ -1,11 +1,9 @@
-import settings
+import db
 import pytz
-from sqlalchemy import Column, String, UnicodeText, DateTime, create_engine, desc, Index
+from sqlalchemy import Column, String, UnicodeText, DateTime,  desc, Index
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
 
 Base = declarative_base()
-db_engine = create_engine(settings.DB_CONNECTION_STRING)
 
 class NewsItem(Base):
     __tablename__ = "news"
@@ -20,19 +18,13 @@ class NewsItem(Base):
     content = Column(UnicodeText)
     raw_html = Column(UnicodeText)
 
-Base.metadata.create_all(db_engine)
-Session = sessionmaker(bind=db_engine)
-
-def get_db_session():
-    return Session()
-
 def get_latest_ids(limit=500):
-    db_sesion = get_db_session()
+    db_sesion = db.get_db_session()
     existsing_ids = set(id[0] for id in db_sesion.query(NewsItem.id).order_by(desc(NewsItem.published))[:100])
     return existsing_ids
 
 def store_news(news):
-    db_session = get_db_session()
+    db_session = db.get_db_session()
     ids = [news_item["id"] for news_item in news]
     existing_ids = set(id[0] for id in db_session.query(NewsItem.id).filter(NewsItem.id.in_(ids)).all())
 
@@ -53,5 +45,5 @@ def store_news(news):
     db_session.commit()
 
 def get_news():
-    db_session = get_db_session()
+    db_session = db.get_db_session()
     return db_session.query(NewsItem).yield_per(50)
