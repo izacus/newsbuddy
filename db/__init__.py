@@ -9,7 +9,8 @@ db_engine = create_engine(settings.DB_CONNECTION_STRING)
 
 def check_create_db():
     if not db_engine.dialect.has_table(db_engine.connect(), 'news'):
-        from db.news import Base, NewsItem
+        from db.news import NewsItem
+        from db.tags import Tag
         Base.metadata.create_all(db_engine)
         from alembic.config import Config
         from alembic import command

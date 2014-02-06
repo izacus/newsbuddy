@@ -1,6 +1,4 @@
-from sqlalchemy.orm import relationship
 import db
-import tags
 import pytz
 from sqlalchemy import Column, String, UnicodeText, DateTime,  desc, Index
 
@@ -16,8 +14,6 @@ class NewsItem(db.Base):
     source_url = Column(UnicodeText)
     content = Column(UnicodeText)
     raw_html = Column(UnicodeText)
-
-    tags = relationship('Tag', secondary=tags.news_tag_table)
 
 def get_latest_ids(limit=500):
     db_sesion = db.get_db_session()
