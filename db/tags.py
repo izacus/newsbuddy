@@ -1,10 +1,10 @@
-from sqlalchemy import Integer, Index, UnicodeText, Column, Table, String, ForeignKey
+from sqlalchemy import Integer, Index, UnicodeText, Column, Table, String, ForeignKey, Enum
 from sqlalchemy.orm import relationship
 import db
 
 news_tags_table = Table('news_tags', db.Base.metadata,
-                        Column('news_id', String(128), ForeignKey('news.id')),
-                        Column('tag_id', Integer, ForeignKey('tags.id')))
+                        Column('news_id', String(128), ForeignKey('news.id', ondelete="CASCADE")),
+                        Column('tag_id', Integer, ForeignKey('tags.id', ondelete="CASCADE")))
 
 class Tag(db.Base):
     __tablename__ = "tags"
@@ -12,7 +12,8 @@ class Tag(db.Base):
 
     id = Column(Integer, primary_key=True)
     tag_name = Column(UnicodeText, nullable=False)
-    news_items = relationship('NewsItem', secondary=news_tags_table, backref='tags')
+    tag_type = Column('tag_type', Enum('PERSON', 'LOCATION', 'OTHER', name="tag_types"), default="OTHER")
+    news_items = relationship('NewsItem', secondary=news_tags_table, backref='tags', )
 
-    def __repr__(self):
-        return "<Tag id=%d name=%s>" % (self.id, self.tag_name, )
+    def __unicode__(self):
+        return u"<Tag id=%d name=%s type=%s>" % (self.id, self.tag_name, self.tag_type, )

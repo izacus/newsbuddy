@@ -17,10 +17,11 @@ import sqlalchemy as sa
 def upgrade():
     op.create_table('tags',
                     sa.Column('id', sa.Integer, primary_key=True),
-                    sa.Column('tag_name', sa.UnicodeText, nullable=False))
+                    sa.Column('tag_name', sa.UnicodeText, nullable=False),
+                    sa.Column('tag_type', sa.Enum('PERSON', 'LOCATION', 'OTHER', name="tag_types")))
     op.create_table('news_tags',
-                    sa.Column('tag_id', sa.Integer, sa.ForeignKey('tags.id')),
-                    sa.Column('news_id', sa.String, sa.ForeignKey('news.id')))
+                    sa.Column('tag_id', sa.Integer, sa.ForeignKey('tags.id', ondelete="CASCADE")),
+                    sa.Column('news_id', sa.String, sa.ForeignKey('news.id', ondelete="CASCADE")))
     op.create_index('tags_name', 'tags', ['tag_name'])
 
 
