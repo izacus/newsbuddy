@@ -9,6 +9,7 @@ pytz
 pysolarized
 raven
 nltk
+dogpile.core
 dogpile.cache
 pylibmc
 Sphinx
