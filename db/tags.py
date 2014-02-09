@@ -13,3 +13,6 @@ class Tag(db.Base):
     id = Column(Integer, primary_key=True)
     tag_name = Column(UnicodeText, nullable=False)
     news_items = relationship('NewsItem', secondary=news_tags_table, backref='tags')
+
+    def __repr__(self):
+        return "<Tag id=%d name=%s>" % (self.id, self.tag_name, )

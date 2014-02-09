@@ -22,7 +22,7 @@ def get_stats(request):
 @cache.cache_on_arguments()
 def build_stats():
     try:
-        db_session = db.news.get_db_session()
+        db_session = db.get_db_session()
         stats = {}
         num_news = db_session.query(func.count(NewsItem.id)).scalar()
         stats["total_news"] = num_news
