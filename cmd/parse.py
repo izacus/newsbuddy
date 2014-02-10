@@ -27,8 +27,7 @@ def dispatch_to_solr(news):
     solr_int.commit()
     print "Dispatch done."
 
-if __name__ == "__main__":
-    
+def parse_news():
     if settings.SENTRY_CONNECTION_STRING is not None:
         from raven import Client
         from raven.handlers.logging import SentryHandler

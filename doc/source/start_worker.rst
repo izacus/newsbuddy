@@ -9,4 +9,4 @@ To run the worker your Solr and WSGI application must run.
 
 After activating the virtualenv run::
 
-    python work.py
+    python newsbuddy.py parse-news

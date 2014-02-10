@@ -5,7 +5,7 @@ from api.v1.query import AtomRenderer
 from pyramid.config import Configurator
 from db.cache import get_cache
 
-if __name__ == "__main__":
+def runserver(host, port):
     logging.basicConfig(level=logging.DEBUG)
     config = Configurator()
     config.include('cornice')
@@ -13,7 +13,7 @@ if __name__ == "__main__":
     config.add_static_view('', 'ui')
     config.add_renderer('atom', AtomRenderer)
     app = config.make_wsgi_app()
-    server = make_server('0.0.0.0', 8005, app)
+    server = make_server(host, port, app)
     server.serve_forever()
 
     # Clear memcached cache on startup

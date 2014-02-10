@@ -6,7 +6,7 @@ import pytz
 from pysolarized import to_solr_date
 from pysolarized import solr
 
-if __name__ == "__main__":
+def export_to_solr():
     logging.basicConfig()
     
     solr_int = solr.Solr(settings.SOLR_ENDPOINT_URLS, settings.SOLR_DEFAULT_ENDPOINT)

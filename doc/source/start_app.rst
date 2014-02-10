@@ -10,7 +10,7 @@ Development server
 
 To start the development server run run::
 
-    python runserver.py
+    python newsbuddy.py runserver
 
 This will start server on port 8005.
 
