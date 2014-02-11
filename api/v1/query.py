@@ -71,7 +71,7 @@ def get_details(request):
 
 @cache.cache_on_arguments()
 def build_details(id):
-    db_session = db.news.get_db_session()
+    db_session = db.get_db_session()
     try:
         item = db_session.query(NewsItem).filter(NewsItem.id == id).one()
     except NoResultFound:
