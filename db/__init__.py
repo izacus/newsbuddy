@@ -5,7 +5,7 @@ import os
 import settings
 
 Base = declarative_base()
-db_engine = create_engine(settings.DB_CONNECTION_STRING, echo=True)
+db_engine = create_engine(settings.DB_CONNECTION_STRING)
 
 def check_create_db():
     if not db_engine.dialect.has_table(db_engine.connect(), 'news'):
