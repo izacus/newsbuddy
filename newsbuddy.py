@@ -14,6 +14,9 @@ def do_action(action, arguments):
     elif action == "runserver":
         import cmd.runserver
         cmd.runserver.runserver(arguments.hostname, arguments.port)
+    elif action == "purge-duplicates":
+        import cmd.purge_duplicates
+        cmd.purge_duplicates.purge_duplicates(arguments.commit)
 
 
 
@@ -24,5 +27,7 @@ runserver_parser.add_argument("hostname", default="0.0.0.0", nargs="?")
 runserver_parser.add_argument("port", default="8005", type=int, nargs="?")
 parse_parser = subcommands.add_parser('parse-news', help="Parse news")
 solr_parser = subcommands.add_parser('export-solr', help="Export database into Solr")
+purge_parser = subcommands.add_parser('purge-duplicates', help="Purge duplicate news from DB")
+purge_parser.add_argument("commit", default=False, type=bool, nargs="?")
 args = parser.parse_args()
 do_action(args.action, args)
