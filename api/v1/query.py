@@ -81,8 +81,6 @@ def build_details(id):
     finally:
         db_session.close()
 
-    tags = item.tags
-
     return {
         u"id": item.id,
         u"title": item.title,
@@ -91,7 +89,7 @@ def build_details(id):
         u"source": item.source,
         u"link": item.source_url,
         u"content": item.content,
-        u"tags": [tag.tag_name for tag in tags]
+        u"tags": [(tag.tag_name, tag.tag_type) for tag in item.tags]
     }
 
 @query_suggest.get()

@@ -1,4 +1,5 @@
 import logging
+from mining import tagging
 import requests
 import scrapers
 import settings
@@ -42,7 +43,11 @@ def parse_news():
     try:
         existing_ids = db.news.get_latest_ids(2000)
         news = scrapers.scrape_news(existing_ids)
-        db.news.store_news(news)
+        stored_news = db.news.store_news(news)
+        # Tag stored news
+        news_tagger = tagging.NewsTagger()
+        for item in stored_news:
+            news_tagger.tag(item)
         if settings.SOLR_ENDPOINT_URLS is not None:
             dispatch_to_solr(news)
         requests.delete(settings.LOCAL_URL + "/v1/news/stats/")

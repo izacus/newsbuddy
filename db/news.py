@@ -15,6 +15,12 @@ class NewsItem(db.Base):
     content = Column(UnicodeText)
     raw_html = Column(UnicodeText)
 
+    def __repr__(self):
+        return unicode(self).encode("ascii", "replace")
+
+    def __unicode__(self):
+        return "< NewsItem: %s - %s >" % (self.title, self.id, )
+
 def get_latest_ids(limit=500):
     db_sesion = db.get_db_session()
     existsing_ids = set(id[0] for id in db_sesion.query(NewsItem.id).order_by(desc(NewsItem.published))[:limit])
@@ -27,6 +33,8 @@ def store_news(news):
     existing_ids = set(id[0] for id in db_session.query(NewsItem.id).filter(NewsItem.id.in_(ids)).all())
 
     count = 0
+
+    stored_items = []
     for news_item in news:
         if news_item["id"] in existing_ids:
             continue
@@ -38,10 +46,13 @@ def store_news(news):
                            published=news_item["published"].astimezone(pytz.utc).replace(tzinfo=None), content=news_item["text"], author=news_item["author"],
                            raw_html=news_item["raw_html"])
         db_session.add(db_item)
+        stored_items.append(db_item)
         count += 1
 
     db_session.commit()
     db_session.close()
+
+    return stored_items
 
 def get_news():
     db_session = db.get_db_session()
