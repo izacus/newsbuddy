@@ -76,6 +76,8 @@ def build_details(id):
         item = db_session.query(NewsItem).filter(NewsItem.id == id).one()
     except NoResultFound:
         return {u"error": u"Document matching id was not found."}
+    finally:
+        db_session.close()
 
     tags = entity_extractor.tag(item.content)
 

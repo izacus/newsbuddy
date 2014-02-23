@@ -18,6 +18,7 @@ class NewsItem(db.Base):
 def get_latest_ids(limit=500):
     db_sesion = db.get_db_session()
     existsing_ids = set(id[0] for id in db_sesion.query(NewsItem.id).order_by(desc(NewsItem.published))[:limit])
+    db_sesion.close()
     return existsing_ids
 
 def store_news(news):
@@ -40,6 +41,7 @@ def store_news(news):
         count += 1
 
     db_session.commit()
+    db_session.close()
 
 def get_news():
     db_session = db.get_db_session()

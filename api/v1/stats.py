@@ -21,8 +21,8 @@ def get_stats(request):
 
 @cache.cache_on_arguments()
 def build_stats():
+    db_session = db.get_db_session()
     try:
-        db_session = db.get_db_session()
         stats = {}
         num_news = db_session.query(func.count(NewsItem.id)).scalar()
         stats["total_news"] = num_news
@@ -58,7 +58,10 @@ def build_stats():
 
     except Exception as e:
         logger.error("Failed to get stats.", exc_info=True)
+        db_session.rollback()
         raise
+    finally:
+        db_session.close()
 
     return stats
 
