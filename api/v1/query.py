@@ -1,13 +1,15 @@
-from cornice import Service
 import datetime
+from cornice import Service
 import db
 from requests import Session
 import settings
 from pysolarized import solr
 from pysolarized import from_solr_date
+from sqlalchemy.orm import subqueryload
 from sqlalchemy.orm.exc import NoResultFound
 
 from db.news import NewsItem
+from db.tags import Tag         # Has to be imported for proper relation management
 from db.cache import get_cache
 from api.v1.atom_renderer import AtomRenderer
 import mining.summarizer
@@ -73,13 +75,13 @@ def get_details(request):
 def build_details(id):
     db_session = db.get_db_session()
     try:
-        item = db_session.query(NewsItem).filter(NewsItem.id == id).one()
+        item = db_session.query(NewsItem).filter(NewsItem.id == id).options(subqueryload(NewsItem.tags)).one()
     except NoResultFound:
         return {u"error": u"Document matching id was not found."}
     finally:
         db_session.close()
 
-    tags = entity_extractor.tag(item.content)
+    tags = item.tags
 
     return {
         u"id": item.id,
@@ -89,7 +91,7 @@ def build_details(id):
         u"source": item.source,
         u"link": item.source_url,
         u"content": item.content,
-        u"tags": tags
+        u"tags": [tag.tag_name for tag in tags]
     }
 
 @query_suggest.get()
