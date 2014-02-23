@@ -17,6 +17,9 @@ def do_action(action, arguments):
     elif action == "purge-duplicates":
         import cmd.purge_duplicates
         cmd.purge_duplicates.purge_duplicates(arguments.commit)
+    elif action == "tag-news":
+        import cmd.tag_news
+        cmd.tag_news.tag_news(arguments.retag)
 
 
 
@@ -29,5 +32,7 @@ parse_parser = subcommands.add_parser('parse-news', help="Parse news")
 solr_parser = subcommands.add_parser('export-solr', help="Export database into Solr")
 purge_parser = subcommands.add_parser('purge-duplicates', help="Purge duplicate news from DB")
 purge_parser.add_argument("commit", default=False, type=bool, nargs="?")
+tag_parser = subcommands.add_parser('tag-news', help="Tag news")
+tag_parser.add_argument("retag", help="Retag already tagged news", default=False, nargs="?")
 args = parser.parse_args()
 do_action(args.action, args)

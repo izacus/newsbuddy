@@ -15,5 +15,8 @@ class Tag(db.Base):
     tag_type = Column('tag_type', Enum('PERSON', 'LOCATION', 'OTHER', name="tag_types"), default="OTHER")
     news_items = relationship('NewsItem', secondary=news_tags_table, backref='tags', )
 
+    def __repr__(self):
+        return unicode(self).encode('ascii', 'replace')
+
     def __unicode__(self):
         return u"<Tag id=%d name=%s type=%s>" % (self.id, self.tag_name, self.tag_type, )
