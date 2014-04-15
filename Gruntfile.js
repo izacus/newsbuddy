@@ -17,11 +17,11 @@ module.exports = function(grunt) {
         concat: {
             options: { separator: ';' },
             dist: {
-                src: ['ui/js/angular.min.js',
-                      'ui/js/typeahead.min.js',
-                      'ui/js/angular-*.js',
-                      'ui/js/bootstrap.min.js',
-                      'ui/js/ng-infinite-scroll.min.js',
+                src: ['ui/js/libs/angular.min.js',
+                      'ui/js/libs/typeahead.min.js',
+                      'ui/js/libs/angular-*.js',
+                      'ui/js/libs/bootstrap.min.js',
+                      'ui/js/libs/ng-infinite-scroll.min.js',
                       'ui/dist/newsbuddy.min.js'],
                 dest: 'ui/dist/nb.min.js'
             }
