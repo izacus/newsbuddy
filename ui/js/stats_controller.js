@@ -30,6 +30,8 @@ angular.module("NewsBuddy").controller("StatsController", ["$scope", "$http", fu
         }
 
 
+        // Total sources data
+
         var labels = [];
         var sources_data = [];
 
@@ -40,12 +42,26 @@ angular.module("NewsBuddy").controller("StatsController", ["$scope", "$http", fu
             }
         }
 
-        var labels_today = [ ];
-        var sources_today_data = [ ];
+        // Data for today
+        // We need same labels in the chart so copy all values first
+        var data_today = {}
+        for (var item in labels) {
+            data_today[labels[item]] = 0;
+        }
+
         for (var item in sources_today) {
             if (sources.hasOwnProperty(item)) {
+                data_today[item] = sources_today[item];
+            }
+        }
+
+        var labels_today = [ ];
+        var sources_today_data = [ ];
+
+        for (var item in data_today) {
+            if (data_today.hasOwnProperty(item)) {
                 labels_today.push(item);
-                sources_today_data.push(sources_today[item]);
+                sources_today_data.push(data_today[item]);
             }
         }
 
@@ -58,6 +74,7 @@ angular.module("NewsBuddy").controller("StatsController", ["$scope", "$http", fu
         ]);
         var options = {
             hAxis: { title: "Novic" },
+            vAxis: { textPosition: "none" },
             tooltip: { showColorCode: true },
             backgroundColor: "#f9f9f9"
         };
