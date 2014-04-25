@@ -1,0 +1,14 @@
+---
+- hosts: newsbuddy-server
+  remote_user: root
+  sudo: yes
+  tasks:
+    - name: Check out new release
+      git: repo=git@bitbucket.org:mavrik/news-buddy.git dest=/home/newsbuddy/news-buddy accept_hostkey=yes
+      sudo_user: newsbuddy
+    - name: Generate minified Javascript
+      local_action: command grunt chdir=..
+      sudo: no
+    - name: Move minified JS to destination
+      copy: src=../ui/dist/nb.min.js dest=/home/newsbuddy/news-buddy/ui/dist/nb.min.js
+      sudo_user: newsbuddy
