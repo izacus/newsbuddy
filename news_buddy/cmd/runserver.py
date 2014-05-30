@@ -10,7 +10,7 @@ def runserver(host, port):
     config = Configurator()
     config.include('cornice')
     api.register(config)
-    config.add_static_view('', '../ui')
+    config.add_static_view('', '../../ui')
     config.add_renderer('atom', AtomRenderer)
     app = config.make_wsgi_app()
     server = make_server(host, port, app)
