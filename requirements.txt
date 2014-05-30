@@ -3,8 +3,6 @@ feedparser
 beautifulsoup4
 lxml
 sqlalchemy
-pyramid
-cornice
 pytz
 pysolarized
 raven
@@ -16,3 +14,5 @@ Sphinx
 Lemmagen
 alembic
 pyatom
+flask
+Flask-API

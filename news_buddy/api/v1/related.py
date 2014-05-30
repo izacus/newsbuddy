@@ -1,18 +1,20 @@
-from cornice import Service
 from db.cache import get_cache
 from pysolarized import solr, from_solr_date
+from flask import request
+from news_buddy import app
 import settings
 
-related_query = Service(name="related", path="/v1/news/related/", description="Returns related news to passed result")
 cache = get_cache()
 
-@related_query.get()
-def get_related(request):
 
-    if "id" not in request.GET:
+@app.route("/v1/news/related/")
+def get_related():
+    news_id = request.args.get(u"id", None)
+    if not news_id:
         return {"error": "missing id parameter"}
-    id = request.GET["id"]
-    return build_related(id)
+
+    return build_related(news_id)
+
 
 @cache.cache_on_arguments()
 def build_related(id):

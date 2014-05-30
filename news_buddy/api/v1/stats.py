@@ -1,23 +1,20 @@
 import logging
 from datetime import datetime, timedelta
 from sqlalchemy import func, extract
+from news_buddy import app
 
-from cornice import Service
-
-from api.v1.query import build_latest_news
 import db
 from db.cache import get_cache
 from db.news import NewsItem
 
-
 logger = logging.getLogger("api.stats")
-
-stats_service = Service(name="news_stats", path="/v1/news/stats/", description="Returns news statistics")
 cache = get_cache()
 
-@stats_service.get()
-def get_stats(request):
+
+@app.route("/v1/news/stats/", methods=["GET"])
+def get_stats():
     return build_stats()
+
 
 @cache.cache_on_arguments()
 def build_stats():
@@ -65,9 +62,11 @@ def build_stats():
 
     return stats
 
-@stats_service.delete()
-def delete_stats(request):
+
+@app.route("/v1/news/stats/", methods=["DELETE"])
+def delete_stats():
     cache.invalidate(True)
     # Re-heat cache
     build_stats()
-    build_latest_news(0)
+    import news_buddy.api.v1.query
+    news_buddy.api.v1.query.build_latest_news(0)
