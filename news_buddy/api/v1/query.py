@@ -63,6 +63,10 @@ def get_details():
     news_id = request.args.get(u"id", None)
     if not news_id:
         return {u"error": u"Missing id query parameter."}
+    return get_details(news_id)
+
+@app.route("/v1/news/detail/<string:news_id>/", methods=["GET"])
+def get_details_id(news_id):
     return build_details(news_id)
 
 

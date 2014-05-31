@@ -12,9 +12,12 @@ def get_related():
     news_id = request.args.get(u"id", None)
     if not news_id:
         return {"error": "missing id parameter"}
+    return get_related_id(news_id)
 
+
+@app.route("/v1/news/related/<string:news_id>/")
+def get_related_id(news_id):
     return build_related(news_id)
-
 
 @cache.cache_on_arguments()
 def build_related(id):
