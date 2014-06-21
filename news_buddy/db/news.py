@@ -56,4 +56,14 @@ def store_news(news):
 
 def get_news():
     db_session = db.get_db_session()
-    return db_session.query(NewsItem).yield_per(50)
+    query = db_session.query(NewsItem)
+
+    offset = 0
+    while True:
+        r = False
+        for news in query.limit(1005).offset(offset):
+            r = True
+            yield news
+        offset += 1005
+        if not r:
+            break
