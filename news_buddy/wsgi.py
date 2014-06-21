@@ -1,10 +1,9 @@
-from news_buddy import app
 import logging
 from db.cache import get_cache
 import settings
+from api import app
 
 application = app
-
 # Clear memcached cache on startup
 cache = get_cache()
 cache.invalidate(True)

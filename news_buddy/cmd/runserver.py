@@ -1,6 +1,6 @@
 #from db.cache import get_cache
 from db.cache import get_cache
-from news_buddy import app
+from api import app
 
 
 def runserver(host, port):
