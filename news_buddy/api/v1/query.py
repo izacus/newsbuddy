@@ -1,6 +1,9 @@
 import datetime
 import db
 from flask import request
+from flask.ext.api.decorators import set_renderers
+from atom_renderer import AtomXMLRenderer, AtomRenderer
+from flask.ext.api.renderers import JSONRenderer, BrowsableAPIRenderer
 from news_buddy import app
 from requests import Session
 import settings
@@ -23,18 +26,73 @@ cache = get_cache()
 
 PAGE_SIZE = 30
 
-#@latest.get(accept='application/json', renderer='json')
-#@latest.get(accept=AtomRenderer.acceptable, renderer='atom')
-
-
 @app.route("/v1/news/latest/")
+@set_renderers(BrowsableAPIRenderer, JSONRenderer, AtomXMLRenderer, AtomRenderer)  # Note the order is important
 def get_latest():
+    """
+    Renders latest news
+    """
     offset = request.data.get(u'offset', 0)
     result = build_latest_news(offset)
     if u"error" in result:
         build_latest_news.invalidate()
     return result
 
+
+@app.route("/v1/news/detail/", methods=["GET"])
+def get_details():
+    """
+    Renders details for a certain news item
+    """
+    news_id = request.args.get(u"id", None)
+    if not news_id:
+        return {u"error": u"Missing id query parameter."}
+    return get_details(news_id)
+
+
+@app.route("/v1/news/detail/<string:news_id>/", methods=["GET"])
+def get_details_id(news_id):
+    """
+    Renders details for a certain news item
+    """
+    return build_details(news_id)
+
+
+@app.route("/v1/news/suggest/query/", methods=["GET"])
+def get_query_suggestions():
+    query = request.args.get(u"q", None)
+    if not query:
+        return {u"error": u"Missing q query parameter."}
+
+    return build_query_suggestions(query)
+
+@app.route("/v1/news/query/", methods=["GET"])
+@set_renderers(BrowsableAPIRenderer, JSONRenderer, AtomXMLRenderer, AtomRenderer)  # Note the order is important
+def get_news():
+    query = request.args.get(u"q", None)
+    if not query:
+        return {u"error": u"Missing q query parameter."}
+
+    start_index = request.args.get(u"offset", 0)
+
+    filters = None
+    if u"published" in request.args or u"source" in request.args:
+        filters = {}
+        if u"published" in request.args:
+            if request.args[u"published"] == u"before":
+                now = datetime.datetime.utcnow()
+                up_to_date = datetime.date(year=now.year, month=now.month - 1, day=1)
+                filters[u"published"] = "[* TO " + up_to_date.strftime("%Y-%m-%dT00:00:00Z") + "]"
+            else:
+                filters[u"published"] = "[" + request.args[u"published"] + " TO " + request.args[u"published"] + "+1DAYS]"
+        if u"source" in request.args:
+            filters[u"source"] = request.args[u"source"]
+
+    results = query_for(query, start_index, filters, False)
+    if results is not None:
+        results["query"] = query
+
+    return results
 
 @cache.cache_on_arguments()
 def build_latest_news(offset):
@@ -56,18 +114,6 @@ def build_latest_news(offset):
         result[u"snippet"] = summary
 
     return results
-
-
-@app.route("/v1/news/detail/", methods=["GET"])
-def get_details():
-    news_id = request.args.get(u"id", None)
-    if not news_id:
-        return {u"error": u"Missing id query parameter."}
-    return get_details(news_id)
-
-@app.route("/v1/news/detail/<string:news_id>/", methods=["GET"])
-def get_details_id(news_id):
-    return build_details(news_id)
 
 
 @cache.cache_on_arguments()
@@ -92,15 +138,6 @@ def build_details(id):
     }
 
 
-@app.route("/v1/news/suggest/query/", methods=["GET"])
-def get_query_suggestions():
-    query = request.args.get(u"q", None)
-    if not query:
-        return {u"error": u"Missing q query parameter."}
-
-    return build_query_suggestions(query)
-
-
 @cache.cache_on_arguments()         # TODO TODO: Prevent caching of Solr error responses
 def build_query_suggestions(query):
     suggest_url = settings.SOLR_ENDPOINT_URLS[settings.SOLR_DEFAULT_ENDPOINT] + "suggest"
@@ -118,33 +155,6 @@ def build_query_suggestions(query):
     field_fill = suggestion_data[3]
 
     return {u"suggestions": suggestions, u"startOffset": start_offest, u"endOffset": end_offset, u"fieldSuggestion": field_fill}
-
-
-#@news_query.get(accept='application/json', renderer='json')
-#@news_query.get(accept=AtomRenderer.acceptable, renderer='atom')
-@app.route("/v1/news/query/", methods=["GET"])
-def get_news():
-    query = request.args.get(u"q", None)
-    if not query:
-        return {u"error": u"Missing q query parameter."}
-
-    start_index = request.args.get(u"offset", 0)
-
-    filters = None
-    if u"published" in request.args or u"source" in request.args:
-        filters = {}
-        if u"published" in request.args:
-            if request.args[u"published"] == u"before":
-                now = datetime.datetime.utcnow()
-                up_to_date = datetime.date(year=now.year, month=now.month - 1, day=1)
-                filters[u"published"] = "[* TO " + up_to_date.strftime("%Y-%m-%dT00:00:00Z") + "]"
-            else:
-                filters[u"published"] = "[" + request.args[u"published"] + " TO " + request.args[u"published"] + "+1DAYS]"
-        if u"source" in request.args:
-            filters[u"source"] = request.args[u"source"]
-
-    return query_for(query, start_index, filters, False)
-
 
 @cache.cache_on_arguments()         # TODO TODO: Prevent caching of Solr error responses
 def query_for(query, start_index, filters, with_content):
