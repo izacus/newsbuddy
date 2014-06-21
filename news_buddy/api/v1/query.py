@@ -1,6 +1,10 @@
 import datetime
-from cornice import Service
 import db
+from flask import request
+from flask.ext.api.decorators import set_renderers
+from atom_renderer import AtomXMLRenderer, AtomRenderer
+from flask.ext.api.renderers import JSONRenderer, BrowsableAPIRenderer
+from news_buddy import app
 from requests import Session
 import settings
 from pysolarized import solr
@@ -11,17 +15,10 @@ from sqlalchemy.orm.exc import NoResultFound
 from db.news import NewsItem
 from db.tags import Tag         # Has to be imported for proper relation management
 from db.cache import get_cache
-from api.v1.atom_renderer import AtomRenderer
 import mining.summarizer
 import mining.entity_extractor
 
-
 req_session = Session()
-
-news_query = Service(name="news_query", path="/v1/news/query/", description="Returns news matching the query")
-latest = Service(name="latest_news", path="/v1/news/latest/", description="Returns latest collected news")
-details = Service(name="news_details", path="/v1/news/detail/", description="Returns detail about a news document")
-query_suggest = Service(name="news_query_suggest", path="/v1/news/suggest/query", description="Returns query suggestions")
 
 summarizer = mining.summarizer.Summarizer()
 entity_extractor = mining.entity_extractor.EntityExtractor()
@@ -29,18 +26,73 @@ cache = get_cache()
 
 PAGE_SIZE = 30
 
-
-@latest.get(accept='application/json', renderer='json')
-@latest.get(accept=AtomRenderer.acceptable, renderer='atom')
-def get_latest(request):
-    offset = 0
-    if u"offset" in request.GET:
-        offset = int(request.GET["offset"])
-
+@app.route("/v1/news/latest/")
+@set_renderers(BrowsableAPIRenderer, JSONRenderer, AtomXMLRenderer, AtomRenderer)  # Note the order is important
+def get_latest():
+    """
+    Renders latest news
+    """
+    offset = request.data.get(u'offset', 0)
     result = build_latest_news(offset)
     if u"error" in result:
         build_latest_news.invalidate()
     return result
+
+
+@app.route("/v1/news/detail/", methods=["GET"])
+def get_details():
+    """
+    Renders details for a certain news item
+    """
+    news_id = request.args.get(u"id", None)
+    if not news_id:
+        return {u"error": u"Missing id query parameter."}
+    return get_details(news_id)
+
+
+@app.route("/v1/news/detail/<string:news_id>/", methods=["GET"])
+def get_details_id(news_id):
+    """
+    Renders details for a certain news item
+    """
+    return build_details(news_id)
+
+
+@app.route("/v1/news/suggest/query/", methods=["GET"])
+def get_query_suggestions():
+    query = request.args.get(u"q", None)
+    if not query:
+        return {u"error": u"Missing q query parameter."}
+
+    return build_query_suggestions(query)
+
+@app.route("/v1/news/query/", methods=["GET"])
+@set_renderers(BrowsableAPIRenderer, JSONRenderer, AtomXMLRenderer, AtomRenderer)  # Note the order is important
+def get_news():
+    query = request.args.get(u"q", None)
+    if not query:
+        return {u"error": u"Missing q query parameter."}
+
+    start_index = request.args.get(u"offset", 0)
+
+    filters = None
+    if u"published" in request.args or u"source" in request.args:
+        filters = {}
+        if u"published" in request.args:
+            if request.args[u"published"] == u"before":
+                now = datetime.datetime.utcnow()
+                up_to_date = datetime.date(year=now.year, month=now.month - 1, day=1)
+                filters[u"published"] = "[* TO " + up_to_date.strftime("%Y-%m-%dT00:00:00Z") + "]"
+            else:
+                filters[u"published"] = "[" + request.args[u"published"] + " TO " + request.args[u"published"] + "+1DAYS]"
+        if u"source" in request.args:
+            filters[u"source"] = request.args[u"source"]
+
+    results = query_for(query, start_index, filters, False)
+    if results is not None:
+        results["query"] = query
+
+    return results
 
 @cache.cache_on_arguments()
 def build_latest_news(offset):
@@ -63,13 +115,6 @@ def build_latest_news(offset):
 
     return results
 
-@details.get()
-def get_details(request):
-    if u"id" not in request.GET:
-        return {u"error": u"Missing id query parameter."}
-
-    id = request.GET["id"]
-    return build_details(id)
 
 @cache.cache_on_arguments()
 def build_details(id):
@@ -92,12 +137,6 @@ def build_details(id):
         u"tags": [(tag.tag_name, tag.tag_type) for tag in item.tags]
     }
 
-@query_suggest.get()
-def get_query_suggestions(request):
-    if u"q" not in request.GET:
-        return {u"error": u"Missing q query parameter."}
-    query = request.GET[u"q"]
-    return build_query_suggestions(query)
 
 @cache.cache_on_arguments()         # TODO TODO: Prevent caching of Solr error responses
 def build_query_suggestions(query):
@@ -116,31 +155,6 @@ def build_query_suggestions(query):
     field_fill = suggestion_data[3]
 
     return {u"suggestions": suggestions, u"startOffset": start_offest, u"endOffset": end_offset, u"fieldSuggestion": field_fill}
-
-
-@news_query.get(accept='application/json', renderer='json')
-@news_query.get(accept=AtomRenderer.acceptable, renderer='atom')
-def get_news(request):
-    if u"q" not in request.GET:
-        return {u"error": u"Missing q query parameter."}
-    start_index = 0
-    if u"offset" in request.GET:
-        start_index = int(request.GET[u"offset"])
-
-    filters = None
-    if u"published" in request.GET or u"source" in request.GET:
-        filters = {}
-        if u"published" in request.GET:
-            if request.GET[u"published"] == u"before":
-                now = datetime.datetime.utcnow()
-                up_to_date = datetime.date(year=now.year, month=now.month - 1, day=1)
-                filters[u"published"] = "[* TO " + up_to_date.strftime("%Y-%m-%dT00:00:00Z") + "]"
-            else:
-                filters[u"published"] = "[" + request.GET[u"published"] + " TO " + request.GET[u"published"] + "+1DAYS]"
-        if u"source" in request.GET:
-            filters[u"source"] = request.GET[u"source"]
-
-    return query_for(request.GET[u"q"], start_index, filters, False)
 
 @cache.cache_on_arguments()         # TODO TODO: Prevent caching of Solr error responses
 def query_for(query, start_index, filters, with_content):
