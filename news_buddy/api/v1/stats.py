@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime, timedelta
+from api import app
 from sqlalchemy import func, extract
-from news_buddy import app
 
 import db
 from db.cache import get_cache

@@ -1,6 +1,7 @@
 import logging
 from db.cache import get_cache
 import settings
+import api.v1
 from api import app
 
 application = app

@@ -1,7 +1,7 @@
+from api import app
 from db.cache import get_cache
 from pysolarized import solr, from_solr_date
 from flask import request
-from news_buddy import app
 import settings
 
 cache = get_cache()

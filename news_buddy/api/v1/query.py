@@ -1,10 +1,10 @@
 import datetime
+from api import app
 import db
 from flask import request
 from flask.ext.api.decorators import set_renderers
 from atom_renderer import AtomXMLRenderer, AtomRenderer
 from flask.ext.api.renderers import JSONRenderer, BrowsableAPIRenderer
-from news_buddy import app
 from requests import Session
 import settings
 from pysolarized import solr

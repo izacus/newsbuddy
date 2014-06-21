@@ -1,7 +1,6 @@
-#from db.cache import get_cache
 from db.cache import get_cache
+import api.v1
 from api import app
-
 
 def runserver(host, port):
     app.run(host, port, debug=True)
