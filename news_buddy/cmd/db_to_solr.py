@@ -16,6 +16,7 @@ def export_to_solr():
     docs = []
     count = 0
     total = db.get_db_session().query(func.count(db.news.NewsItem.id)).scalar()
+
     for news_item in db.news.get_news():
         doc = {u"id": news_item.id, u"title": news_item.title,
                u"source": news_item.source, u"language": u"si",
@@ -25,10 +26,11 @@ def export_to_solr():
         if news_item.author is not None:
             doc[u"author"] = news_item.author
 
-        solr_int.add(doc)
-        count += 1
-
-        if count % 100 == 0:
+        docs.append(doc)
+        if len(docs) > 200:
+            solr_int.add(docs)
+            count += len(docs)
+            docs = []
             print "%s/%s" % (count, total)
 
     print "%s/%s" % (count, total)
