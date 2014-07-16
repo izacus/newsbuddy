@@ -9,7 +9,7 @@ raven
 nltk
 dogpile.core
 dogpile.cache
-pylibmc
+redis
 Sphinx
 Lemmagen
 alembic

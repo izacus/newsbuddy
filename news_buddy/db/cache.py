@@ -5,16 +5,17 @@ from dogpile.cache import make_region
 
 
 def get_cache():
-    if settings.MEMCACHED_URL:
+    if settings.REDIS_CONFIG and settings.REDIS_CONFIG.get("host"):
         region = make_region(
             function_key_generator=fn_key_generator
         ).configure(
-            'dogpile.cache.pylibmc',
+            'dogpile.cache.redis',
             expiration_time=7200,
             arguments={
-                'url': [settings.MEMCACHED_URL],
-                'binary': True,
-                'behaviors': {"tcp_nodelay": True, "ketama": True}
+                'host': settings.REDIS_CONFIG["host"],
+                'port': settings.REDIS_CONFIG["port"],
+                'db': settings.REDIS_CONFIG["db"],
+                'distributed_lock': True
             }
         )
     else:
