@@ -1,6 +1,7 @@
 from lxml import etree
 import bs4
 import feedparser
+import scraping
 from scrapers.utils import time_to_datetime, get_hash, get_article, get_sha_hash, get_rss
 import logging
 
@@ -13,7 +14,7 @@ class DemokracijaScraper(object):
     """
     DEMOKRACIJA_RSS_URL = "http://demokracija.si/index.php?format=feed&type=rss"
 
-    def get_news(self, existing_ids=None):
+    def parse_source(self, existing_ids = None):
         news = []
         feed_content = get_rss(self.DEMOKRACIJA_RSS_URL)
 
@@ -25,27 +26,33 @@ class DemokracijaScraper(object):
                 logger.debug("Skipping %s", link)
                 continue
 
-            try:
-                article = self.get_article_text(link)
-            except Exception as e:
-                logger.warn("Failed to parse article %s", link, exc_info=True)
-                continue
-
-            if article is None: continue
             published_date = time_to_datetime(feed_entry["published_parsed"])
-            article["title"] = feed_entry["title"]
-            article["author"] = feed_entry["author"] if "author" in feed_entry else None
-            article["published"] = published_date
-            article["source"] = "Demokracija"
-            article["source_url"] = link
-            article["language"] = "si"
-            article["id"] = get_sha_hash(link)
-            news.append(article)
+            title = feed_entry["title"]
+            author = feed_entry["author"] if "author" in feed_entry else None
+            news.append((link, { "title": title, "author": author, "published": published_date}))
 
             max_counter -= 1
             if max_counter <= 0:
                 break
-        return news
+
+        scraping.parse_articles(self, news)
+
+    def parse_article(self, article_url):
+        link, data = article_url
+
+        article = self.get_article_text(link)
+        if article is None:
+            return
+
+        article["title"] = data["title"]
+        article["author"] = data["author"]
+        article["published"] = data["published"]
+        article["source"] = "Demokracija"
+        article["source_url"] = link
+        article["language"] = "si"
+        article["id"] = get_sha_hash(link)
+
+        scraping.add_new_article(article)
 
     def get_article_text(self, link):
         logger.debug("Grabbing article %s", link)

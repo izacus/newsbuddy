@@ -29,7 +29,7 @@ def get_redis():
     return redis
 
 def scrape_news(existing_ids=None):
-    scrapers = [DeloScraper(), VAL202Scraper(), MonitorScraper()]#, DemokracijaScraper(), SiolScraper(), VecerScraper(), FinanceScraper(), MladinaScraper(), TwentyFourHrsScraper(), RTVScraper(), ZurnalScraper(), DeloScraper(), DnevnikScraper()]
+    scrapers = [DeloScraper(), VAL202Scraper(), MonitorScraper(), DemokracijaScraper()]#, SiolScraper(), VecerScraper(), FinanceScraper(), MladinaScraper(), TwentyFourHrsScraper(), RTVScraper(), ZurnalScraper(), DeloScraper(), DnevnikScraper()]
 
     queue = Queue('sources', connection=get_redis())
     for scraper in scrapers:

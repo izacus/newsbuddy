@@ -31,13 +31,9 @@ class MonitorScraper(object):
         link, data = article_url
         guid = data["guid"]
 
-        try:
-            article = self.get_article(link)
-        except Exception as e:
-            logger.warn("Failed to parse article %s", link, exc_info=True)
+        article = self.get_article(link)
+        if article is None:
             return
-
-        if article is None: return
 
         article["title"] = data["title"]
         article["published"] = data["published"]

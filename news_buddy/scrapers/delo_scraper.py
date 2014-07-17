@@ -27,11 +27,7 @@ class DeloScraper(object):
     def parse_article(self, article_url):
         link, data = article_url
 
-        try:
-            article = self.get_article_text(link)
-        except Exception as e:
-            logger.warn("Failed to parse article %s", link, exc_info=True)
-
+        article = self.get_article_text(link)
         if article is None:
             return None
 
