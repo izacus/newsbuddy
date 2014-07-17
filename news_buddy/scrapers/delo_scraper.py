@@ -1,5 +1,5 @@
 import bs4
-import feedparser
+import scraping
 from scrapers.utils import time_to_datetime, get_hash, get_article, get_sha_hash, get_rss
 import logging
 
@@ -8,9 +8,10 @@ logger = logging.getLogger("scraper.delo")
 class DeloScraper(object):
     DELO_RSS_URL = "http://www.delo.si/rss/"
 
-    def get_news(self, existing_ids = None):
-        news = []
+    def parse_source(self, existing_ids = None):
         feed_content = get_rss(self.DELO_RSS_URL)
+        article_urls = []
+
         for feed_entry in feed_content.entries:
             link = feed_entry["link"]
 
@@ -18,21 +19,28 @@ class DeloScraper(object):
                 logger.debug("Skipping %s", link)
                 continue
 
-            try:
-                article = self.get_article_text(link)
-            except Exception as e:
-                logger.warn("Failed to parse article %s", link, exc_info=True)
-                continue
-
-            if article is None: continue
             published_date = time_to_datetime(feed_entry["published_parsed"])
-            article["published"] = published_date
-            article["source"] = "Delo"
-            article["source_url"] = link
-            article["language"] = "si"
-            article["id"] = get_sha_hash(link)
-            news.append(article)
-        return news
+            article_urls.append((link, {"published": published_date }))
+
+        scraping.parse_articles(self, article_urls)
+
+    def parse_article(self, article_url):
+        link, data = article_url
+
+        try:
+            article = self.get_article_text(link)
+        except Exception as e:
+            logger.warn("Failed to parse article %s", link, exc_info=True)
+
+        if article is None:
+            return None
+
+        article["published"] = data["published"]
+        article["source"] = "Delo"
+        article["source_url"] = link
+        article["language"] = "si"
+        article["id"] = get_sha_hash(link)
+        scraping.add_new_article(article)
 
     def get_article_text(self, link):
         logger.debug("Grabbing article %s", link)
