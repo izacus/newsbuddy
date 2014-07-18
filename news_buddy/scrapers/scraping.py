@@ -31,7 +31,7 @@ def get_redis():
     return redis
 
 def scrape_news(existing_ids=None):
-    scrapers = [DeloScraper(), VAL202Scraper(), MonitorScraper(), DemokracijaScraper()]#, SiolScraper(), VecerScraper(), FinanceScraper(), MladinaScraper(), TwentyFourHrsScraper(), RTVScraper(), ZurnalScraper(), DeloScraper(), DnevnikScraper()]
+    scrapers = [DeloScraper(), VAL202Scraper(), MonitorScraper(), DemokracijaScraper(), SiolScraper(), VecerScraper()]#, FinanceScraper(), MladinaScraper(), TwentyFourHrsScraper(), RTVScraper(), ZurnalScraper(), DeloScraper(), DnevnikScraper()]
 
     queue = Queue('sources', connection=get_redis())
     for scraper in scrapers:
@@ -45,12 +45,12 @@ def parse_articles(scraper, article_links):
 def add_new_article(article):
     db.news.store_news([article])
     queue = Queue('articles_dispatch', connection=get_redis())
-    queue.enqueue(tag_new_article, article)
+    queue.enqueue(tag_new_article, article["id"])
     queue.enqueue(dispatch_to_solr, [article])
 
-def tag_new_article(article):
+def tag_new_article(article_id):
     news_tagger = tagging.NewsTagger()
-    news_tagger.tag([article])
+    news_tagger.tag(article_id)
 
 def dispatch_to_solr(news):
     solr_int = solr.Solr(settings.SOLR_ENDPOINT_URLS, settings.SOLR_DEFAULT_ENDPOINT)

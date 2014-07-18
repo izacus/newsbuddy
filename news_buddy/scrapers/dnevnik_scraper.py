@@ -1,5 +1,4 @@
 import bs4
-import feedparser
 from scrapers.utils import time_to_datetime, get_hash, get_article, get_sha_hash, get_rss
 import logging
 

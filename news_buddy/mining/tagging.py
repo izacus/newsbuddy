@@ -1,6 +1,7 @@
 import logging
 from lemmagen import lemmatizer
 import db
+import db.news
 from sqlalchemy.orm.exc import NoResultFound
 from mining.entity_extractor import EntityExtractor
 from db.tags import Tag     # Must be imported for NewsItem reverse mapping
@@ -15,13 +16,14 @@ class NewsTagger:
         self.tagger = EntityExtractor()
         self.lemmatizer = lemmatizer.Lemmatizer()
 
-    def tag(self, news_item, db_session=None):
+    def tag(self, news_item_id, db_session=None):
         tags = []
         if db_session:
             s = db_session
         else:
             s = db.get_db_session()
 
+        news_item = s.query(db.news.NewsItem).filter_by(id=news_item_id).one()
         s.add(news_item)
         news_item_tags = self.tagger.tag(" ".join([news_item.title, news_item.content]))
         if news_item_tags is None:

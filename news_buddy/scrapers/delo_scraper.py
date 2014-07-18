@@ -8,7 +8,7 @@ logger = logging.getLogger("scraper.delo")
 class DeloScraper(object):
     DELO_RSS_URL = "http://www.delo.si/rss/"
 
-    def parse_source(self, existing_ids = None):
+    def parse_source(self, existing_ids=None):
         feed_content = get_rss(self.DELO_RSS_URL)
         article_urls = []
 

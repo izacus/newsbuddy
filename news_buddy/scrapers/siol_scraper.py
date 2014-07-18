@@ -1,6 +1,6 @@
 import logging
 from lxml import etree
-import feedparser
+import scraping
 from scrapers.utils import time_to_datetime, get_hash, get_sha_hash, get_article, get_rss
 
 logger = logging.getLogger("scraper.siol")
@@ -11,7 +11,7 @@ class SiolScraper(object):
     """
     SIOL_RSS_URL = "http://www.siol.net/rss.aspx?path=SiOL.Net"
 
-    def get_news(self, existing_ids=None):
+    def parse_source(self, existing_ids=None):
         news = []
         feed_content = get_rss(self.SIOL_RSS_URL)
 
@@ -22,23 +22,26 @@ class SiolScraper(object):
                 logger.debug("Skipping %s", link)
                 continue
 
-            try:
-                article = self.get_article_text(link)
-            except Exception as e:
-                logger.warn("Failed to parse article %s", link, exc_info=True)
-                continue
-
-            if article is None: continue
             published_date = time_to_datetime(feed_entry["published_parsed"])
-            article["published"] = published_date
-            article["title"] = feed_entry["title"]
-            article["source"] = "Siol.net"
-            article["source_url"] = link
-            article["language"] = "si"
-            article["id"] = get_sha_hash(link)
-            news.append(article)
+            title = feed_entry["title"]
+            news.append((link, {"title": title, "published": published_date}))
 
-        return news
+        scraping.parse_articles(self, news)
+
+    def parse_article(self, article_url):
+        link, data = article_url
+
+        article = self.get_article_text(link)
+
+        if article is None: return
+        published_date = data["published"]
+        article["published"] = published_date
+        article["title"] = data["title"]
+        article["source"] = "Siol.net"
+        article["source_url"] = link
+        article["language"] = "si"
+        article["id"] = get_sha_hash(link)
+        scraping.add_new_article(article)
 
     def get_article_text(self, link):
         logger.debug("Grabbing article %s", link)
