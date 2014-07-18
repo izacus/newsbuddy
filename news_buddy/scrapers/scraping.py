@@ -1,6 +1,8 @@
 
 import itertools
 import db.news
+from mining import tagging
+from pysolarized import solr, to_solr_date
 from redis import Redis
 from rq import Queue
 from scrapers.demokracija_scraper import DemokracijaScraper
@@ -42,6 +44,33 @@ def parse_articles(scraper, article_links):
 
 def add_new_article(article):
     db.news.store_news([article])
+    queue = Queue('articles_dispatch', connection=get_redis())
+    queue.enqueue(tag_new_article, article)
+    queue.enqueue(dispatch_to_solr, [article])
+
+def tag_new_article(article):
+    news_tagger = tagging.NewsTagger()
+    news_tagger.tag([article])
+
+def dispatch_to_solr(news):
+    solr_int = solr.Solr(settings.SOLR_ENDPOINT_URLS, settings.SOLR_DEFAULT_ENDPOINT)
+    # Build documents for solr dispatch
+    docs = []
+    for news_item in news:
+        doc = { "id" : news_item["id"], "title" : news_item["title"],
+                "source" : news_item["source"], "language" : news_item["language"],
+                "source_url" : news_item["source_url"], "content" : news_item["text"],
+                "published" : to_solr_date(news_item["published"]) }
+
+        if news_item["author"] is not None:
+            doc["author"] = news_item["author"]
+
+        docs.append(doc)
+
+    solr_int.add(docs)
+    solr_int.commit()
+
+
 
 def get_news(options):
     scraper, existing_ids = options

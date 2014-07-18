@@ -16,7 +16,7 @@ def get_stats():
     return build_stats()
 
 
-@cache.cache_on_arguments()
+@cache.cache_on_arguments(expiration_time=3600)
 def build_stats():
     db_session = db.get_db_session()
     try:
