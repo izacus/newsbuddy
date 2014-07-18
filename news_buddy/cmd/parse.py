@@ -24,15 +24,7 @@ def parse_news():
         logging.basicConfig(level=logging.DEBUG)
 
     try:
-        existing_ids = db.news.get_latest_ids(2000)
+        existing_ids = db.news.get_latest_ids(800)
         scrapers.scrape_news(existing_ids)
-        #stored_news = db.news.store_news(news)
-        # Tag stored news
-        #news_tagger = tagging.NewsTagger()
-        #for item in stored_news:
-        #    news_tagger.tag(item)
-        #if settings.SOLR_ENDPOINT_URLS is not None:
-        #    dispatch_to_solr(news)
-        #requests.delete(settings.LOCAL_URL + "/v1/news/stats/")
     except Exception as e:
         logger.error("Failed to process work packet!", exc_info=True)
