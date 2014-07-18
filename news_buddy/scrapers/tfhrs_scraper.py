@@ -3,7 +3,7 @@ import logging
 import lxml.html
 import re
 from lxml import etree
-import feedparser
+import scraping
 import nltk
 from scrapers.utils import time_to_datetime, get_hash, get_article, get_sha_hash, get_rss
 
@@ -13,7 +13,7 @@ class TwentyFourHrsScraper(object):
 
     TFH_RSS_URL = "http://www.24ur.com/rss/"
 
-    def get_news(self, existing_ids=None):
+    def parse_source(self, existing_ids=None):
         news = []
         feed_content = get_rss(self.TFH_RSS_URL)
         for feed_entry in feed_content.entries:
@@ -23,25 +23,28 @@ class TwentyFourHrsScraper(object):
                 logger.debug("Skipping %s", link)
                 continue
 
-            try:
-                article = self.get_article(link)
-            except Exception as e:
-                logger.warn("Failed to parse article %s", link, exc_info=True)
-                continue
-
-            if article is None:
-                continue
-
             published_date = time_to_datetime(feed_entry["published_parsed"])
-            article["title"] = feed_entry["title"]
-            article["published"] = published_date
-            article["source"] = "24ur"
-            article["source_url"] = link
-            article["language"] = "si"
-            # Generate ID from link
-            article["id"] = get_sha_hash(link)
-            news.append(article)
-        return news
+            title = feed_entry["title"]
+
+            news.append((link, {"published": published_date, "title": title}))
+
+        scraping.parse_articles(self, news)
+
+    def parse_article(self, article_url):
+        link, data = article_url
+
+        article = self.get_article(link)
+        if article is None: return
+
+        published_date = data["published"]
+        article["title"] = data["title"]
+        article["published"] = published_date
+        article["source"] = "24ur"
+        article["source_url"] = link
+        article["language"] = "si"
+        # Generate ID from link
+        article["id"] = get_sha_hash(link)
+        scraping.add_new_article(article)
 
     def get_article(self, link):
         logger.debug("Grabbing article %s", link)
@@ -51,7 +54,7 @@ class TwentyFourHrsScraper(object):
         result["raw_html"] = article_html
         tree = etree.fromstring(article_html, etree.HTMLParser())
         summary = tree.xpath('//div[@class="summary"]/p/text()')
-        result["subtitles"] = summary
+        result["subtitles"] = unicode(summary)
 
         author_texts = tree.xpath("//div[@class='containerLeftSide']/text()")
         author_text = u" ".join(text.strip() for text in author_texts)

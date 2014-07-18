@@ -1,6 +1,5 @@
-from urllib2 import ProxyHandler
 import bs4
-import feedparser
+import scraping
 from scrapers.utils import get_article, get_hash, time_to_datetime, get_sha_hash, get_rss
 import logging
 
@@ -12,7 +11,7 @@ class RTVScraper(object):
                     "http://www.rtvslo.si/feeds/05.xml"]
     RTV_ARTICLE_URL = "http://www.rtvslo.si/index.php?c_mod=news&op=print&id="
 
-    def get_news(self, existing_ids=None):
+    def parse_source(self, existing_ids=None):
         news = []
         for rss_feed in self.RTV_RSS_URLS:
             logger.debug("Parsing %s", rss_feed)
@@ -25,23 +24,24 @@ class RTVScraper(object):
                     logger.debug("Skipping %s", link)
                     continue
 
-                article_id = link[link.rfind("/") + 1:]
-
-                try:
-                    news_item = self.get_article_text(article_id)
-                except Exception as e:
-                    logger.warn("Failed to parse article ID %s", article_id, exc_info=True)
-                    continue
-
                 published_date = time_to_datetime(feed_entry["published_parsed"])
-                news_item["published"] = published_date
-                news_item["source"] = "RTVSlo"
-                news_item["source_url"] = link
-                news_item["language"] = "si"
-                news_item["author"] = None
-                news_item["id"] = get_sha_hash(link)
-                news.append(news_item)
-        return news
+                news.append((link, {"published": published_date}))
+
+        scraping.parse_articles(self, news)
+
+    def parse_article(self, article_url):
+        link, data = article_url
+        article_id = link[link.rfind("/") + 1:]
+
+        news_item = self.get_article_text(article_id)
+        published_date = data["published"]
+        news_item["published"] = published_date
+        news_item["source"] = "RTVSlo"
+        news_item["source_url"] = link
+        news_item["language"] = "si"
+        news_item["author"] = None
+        news_item["id"] = get_sha_hash(link)
+        scraping.add_new_article(news_item)
 
     def get_article_text(self, article_id):
         logger.debug("[RTVSlo] Grabbing article ID %s", article_id)
