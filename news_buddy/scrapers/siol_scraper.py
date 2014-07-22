@@ -64,7 +64,12 @@ class SiolScraper(object):
                 author = None
 
         result["author"] = author
-        result["subtitles"] = [' '.join(tree.xpath('//article[@id="article"]/header')[0].xpath('./p')[-1].xpath('./text()')).strip()]
+        
+        try:
+            result["subtitles"] = [' '.join(tree.xpath('//article[@id="article"]/header')[0].xpath('./p')[-1].xpath('./text()')).strip()]
+        except IndexError:
+            result["subtitles"] = None
+
         result["text"] = '\n\n'.join([' '.join(x).strip() for x in map(lambda x: x.xpath('.//text()'), tree.xpath('//article[@id="article"]/p'))]).strip()
 
         return result
