@@ -9,41 +9,37 @@ from db.cache import FromCache
 
 logger = logging.getLogger("mining.newstagger")
 
-
 class NewsTagger:
+    db_session = None
 
     def __init__(self):
         self.tagger = EntityExtractor()
         self.lemmatizer = lemmatizer.Lemmatizer()
 
-    def tag(self, news_item_id, db_session=None):
-        tags = []
-        if db_session:
-            s = db_session
-        else:
-            s = db.get_db_session()
+    def tag(self, news_item_id):
+        if not self.db_session:
+            self.db_session = db.get_db_session()
 
+        s = self.db_session
         news_item = s.query(db.news.NewsItem).filter_by(id=news_item_id).one()
         s.add(news_item)
         news_item_tags = self.tagger.tag(" ".join([news_item.title, news_item.content]))
         if news_item_tags is None:
-            return tags
+            return
 
         news_item.tags = []
-
-        for news_tag, news_tag_type in news_item_tags:
-            news_tag = self.lemmatizer.lemmatize(news_tag).strip()
+        for tag in news_item_tags:
+            news_tag = self.lemmatizer.lemmatize(tag[0]).strip()
             try:
-                tag = s.query(db.tags.Tag).filter_by(tag_name=news_tag).options(FromCache("tags")).one()
+                tag = s.query(db.tags.Tag).filter_by(tag_name=tag[0]).options(FromCache("tags")).one()
             except NoResultFound:
-                tag = db.tags.Tag(tag_name=news_tag, tag_type=news_tag_type)
+                tag = db.tags.Tag(tag_name=news_tag, tag_type=tag[1])
 
             tag.news_items.append(news_item)
             s.add(tag)
-            tags.append(tag)
 
-        if not db_session:
-            s.commit()
-
+        s.commit()
         logger.info("Tagged %s." % (news_item, ))
-        return tags
+
+# Cache tagger instance
+tagger = NewsTagger()

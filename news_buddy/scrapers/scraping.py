@@ -52,9 +52,7 @@ def add_new_article(article):
 
 def tag_new_article(article_id):
     from mining import tagging
-    news_tagger = tagging.NewsTagger()
-    news_tagger.tag(article_id)
-
+    tagging.tagger.tag(article_id)
 
 def dispatch_to_solr(news):
     from pysolarized import solr, to_solr_date
