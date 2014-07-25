@@ -1,8 +1,8 @@
 import logging
+
 import bs4
-from lxml import etree
-import scraping
 from scrapers.utils import get_rss, get_sha_hash, time_to_datetime, get_article
+
 
 logger = logging.getLogger("scraper.val202")
 
@@ -34,7 +34,7 @@ class VAL202Scraper(object):
 
             article_urls.append((link, {"guid": guid, "published": published_date, "title": title, "text": text, "author": author }))
 
-        scraping.parse_articles(self, article_urls)
+        return article_urls
 
     def parse_article(self, article_url):
         link, data = article_url
@@ -58,4 +58,4 @@ class VAL202Scraper(object):
 
         # Generate ID from link
         article["id"] = get_sha_hash(data["guid"])
-        scraping.add_new_article(article)
+        return article

@@ -40,4 +40,4 @@ class EntityExtractor():
         if len(tags) == 0:
             return None
 
-        return list(tags)
+        return tags

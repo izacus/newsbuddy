@@ -1,7 +1,8 @@
-import bs4
-import scraping
-from scrapers.utils import get_article, get_hash, time_to_datetime, get_sha_hash, get_rss
 import logging
+
+import bs4
+from scrapers.utils import get_article, get_hash, time_to_datetime, get_sha_hash, get_rss
+
 
 logger = logging.getLogger("scraper.rtvslo")
 
@@ -27,7 +28,7 @@ class RTVScraper(object):
                 published_date = time_to_datetime(feed_entry["published_parsed"])
                 news.append((link, {"published": published_date}))
 
-        scraping.parse_articles(self, news)
+        return news
 
     def parse_article(self, article_url):
         link, data = article_url
@@ -41,7 +42,7 @@ class RTVScraper(object):
         news_item["language"] = "si"
         news_item["author"] = None
         news_item["id"] = get_sha_hash(link)
-        scraping.add_new_article(news_item)
+        return news_item
 
     def get_article_text(self, article_id):
         logger.debug("[RTVSlo] Grabbing article ID %s", article_id)

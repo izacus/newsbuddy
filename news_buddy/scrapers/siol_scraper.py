@@ -1,7 +1,8 @@
 import logging
+
 from lxml import etree
-import scraping
-from scrapers.utils import time_to_datetime, get_hash, get_sha_hash, get_article, get_rss
+from scrapers.utils import time_to_datetime, get_sha_hash, get_article, get_rss
+
 
 logger = logging.getLogger("scraper.siol")
 
@@ -26,7 +27,7 @@ class SiolScraper(object):
             title = feed_entry["title"]
             news.append((link, {"title": title, "published": published_date}))
 
-        scraping.parse_articles(self, news)
+        return news
 
     def parse_article(self, article_url):
         link, data = article_url
@@ -41,7 +42,7 @@ class SiolScraper(object):
         article["source_url"] = link
         article["language"] = "si"
         article["id"] = get_sha_hash(link)
-        scraping.add_new_article(article)
+        return article
 
     def get_article_text(self, link):
         logger.debug("Grabbing article %s", link)
@@ -64,7 +65,7 @@ class SiolScraper(object):
                 author = None
 
         result["author"] = author
-        
+
         try:
             result["subtitles"] = [' '.join(tree.xpath('//article[@id="article"]/header')[0].xpath('./p')[-1].xpath('./text()')).strip()]
         except IndexError:

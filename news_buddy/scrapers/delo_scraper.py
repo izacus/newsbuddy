@@ -1,7 +1,8 @@
-import bs4
-import scraping
-from scrapers.utils import time_to_datetime, get_hash, get_article, get_sha_hash, get_rss
 import logging
+
+import bs4
+from scrapers.utils import time_to_datetime, get_hash, get_article, get_sha_hash, get_rss
+
 
 logger = logging.getLogger("scraper.delo")
 
@@ -22,7 +23,7 @@ class DeloScraper(object):
             published_date = time_to_datetime(feed_entry["published_parsed"])
             article_urls.append((link, {"published": published_date }))
 
-        scraping.parse_articles(self, article_urls)
+        return article_urls
 
     def parse_article(self, article_url):
         link, data = article_url
@@ -36,7 +37,7 @@ class DeloScraper(object):
         article["source_url"] = link
         article["language"] = "si"
         article["id"] = get_sha_hash(link)
-        scraping.add_new_article(article)
+        return article
 
     def get_article_text(self, link):
         logger.debug("Grabbing article %s", link)

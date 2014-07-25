@@ -1,7 +1,8 @@
 import logging
+
 import bs4
-import scraping
-from scrapers.utils import time_to_datetime, get_hash, get_sha_hash, get_article, get_rss
+from scrapers.utils import time_to_datetime, get_sha_hash, get_article, get_rss
+
 
 logger = logging.getLogger("scraper.finance")
 
@@ -22,7 +23,7 @@ class FinanceScraper(object):
             published_date = time_to_datetime(feed_entry["published_parsed"])
             news.append((link, {"published": published_date}))
 
-        scraping.parse_articles(self, news)
+        return news
 
     def parse_article(self, article_url):
         link, data = article_url
@@ -35,7 +36,7 @@ class FinanceScraper(object):
         article["source_url"] = link
         article["language"] = "si"
         article["id"] = get_sha_hash(link)
-        scraping.add_new_article(article)
+        return article
 
 
     def get_article_text(self, link):

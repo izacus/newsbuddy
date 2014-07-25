@@ -1,7 +1,8 @@
 import logging
+
 from lxml import etree
-import scraping
 from scrapers.utils import get_rss, get_sha_hash, time_to_datetime, get_article
+
 
 logger = logging.getLogger("scraper.monitor")
 
@@ -24,8 +25,8 @@ class MonitorScraper(object):
             title = feed_entry["title"]
 
             article_urls.append((link, {"guid": guid, "title": title, "published": published_date}))
-        scraping.parse_articles(self, article_urls)
 
+        return article_urls
 
     def parse_article(self, article_url):
         link, data = article_url
@@ -42,7 +43,7 @@ class MonitorScraper(object):
         article["language"] = "si"
         # Generate ID from link
         article["id"] = get_sha_hash(guid)
-        scraping.add_new_article(article)
+        return article
 
     def get_article(self, link):
         logger.debug("Grabbing article %s", link)

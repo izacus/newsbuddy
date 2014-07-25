@@ -1,36 +1,19 @@
 import db
 from db.news import NewsItem
-from db.tags import Tag
-from mining import tagging
-from sqlalchemy import func
+from rq import Queue
+import tasks
 
 
 def tag_news(retag=False):
     db_session = db.get_db_session()
 
     if retag:
-        news_items = db_session.query(NewsItem)
+
+        news_items = db_session.query(NewsItem.id)
     else:
         # Get newsitems without tags
-        news_items = db_session.query(NewsItem).filter(~NewsItem.tags.any())
+        news_items = db_session.query(NewsItem.id).filter(~NewsItem.tags.any())
 
-    tagger = tagging.NewsTagger()
-
-    counter = 0
-
-    write_session = db.get_db_session()
-    for news_item in news_items:
-        tagger.tag(news_item, db_session=write_session)
-        counter += 1
-        if counter % 10 == 0:
-            print counter
-            write_session.commit()
-
-    write_session.commit()
-
-    # Purge all tags without news items
-    write_session.query(Tag).filter(~Tag.news_items.any()).delete(synchronize_session='fetch')
-    write_session.commit()
-
-    write_session.close()
-    db_session.close()
+    for item in news_items:
+        queue = Queue('articles_dispatch', connection=tasks.redis)
+        queue.enqueue("tasks.tag_article.tag_article", item)

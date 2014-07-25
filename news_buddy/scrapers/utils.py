@@ -2,10 +2,12 @@ import calendar
 from datetime import datetime
 import hashlib
 from urllib2 import ProxyHandler
+import sys
+
 import feedparser
 import pytz
 import requests
-import sys
+
 
 requests_session = requests.Session()
 

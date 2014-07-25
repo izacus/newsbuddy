@@ -1,6 +1,7 @@
 import db
 import pytz
-from sqlalchemy import Column, String, UnicodeText, DateTime,  desc, Index
+from tags import news_tags_table
+from sqlalchemy import Column, String, UnicodeText, DateTime, desc, Index
 
 class NewsItem(db.Base):
     __tablename__ = "news"

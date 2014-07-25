@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 import logging
+
 import lxml.html
 import re
 from lxml import etree
-import scraping
 import nltk
 from scrapers.utils import time_to_datetime, get_hash, get_article, get_sha_hash, get_rss
+
 
 logger = logging.getLogger("scraper.24ur")
 
@@ -28,7 +29,7 @@ class TwentyFourHrsScraper(object):
 
             news.append((link, {"published": published_date, "title": title}))
 
-        scraping.parse_articles(self, news)
+        return news
 
     def parse_article(self, article_url):
         link, data = article_url
@@ -44,7 +45,7 @@ class TwentyFourHrsScraper(object):
         article["language"] = "si"
         # Generate ID from link
         article["id"] = get_sha_hash(link)
-        scraping.add_new_article(article)
+        return article
 
     def get_article(self, link):
         logger.debug("Grabbing article %s", link)
