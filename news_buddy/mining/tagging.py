@@ -27,7 +27,7 @@ def tag_article(article_id):
     for tag in article_tags:
         news_tag = lem.lemmatize(tag[0]).strip()
         try:
-            tag = s.query(db.tags.Tag).filter_by(tag_name=news_tag).one()
+            tag = s.query(db.tags.Tag).filter_by(tag_name=news_tag).FromCache('tags').one()
         except NoResultFound:
             tag = db.tags.Tag(tag_name=news_tag, tag_type=tag[1])
         tag.news_items.append(article)
