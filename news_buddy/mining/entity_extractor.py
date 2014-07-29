@@ -37,7 +37,5 @@ class EntityExtractor():
 
             last_tag = tag
 
-        if len(tags) == 0:
-            return None
-
+        if len(tags) == 0: return None
         return tags
