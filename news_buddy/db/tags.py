@@ -13,7 +13,7 @@ class Tag(db.Base):
     id = Column(Integer, primary_key=True)
     tag_name = Column(UnicodeText, nullable=False)
     tag_type = Column('tag_type', Enum('PERSON', 'LOCATION', 'OTHER', name="tag_types"), default="OTHER")
-    news_items = relationship('NewsItem', secondary=news_tags_table, backref='tags', )
+    news_items = relationship('NewsItem', secondary=news_tags_table, backref='tags')
 
     def __repr__(self):
         return unicode(self).encode('ascii', 'replace')
