@@ -18,8 +18,12 @@ def tag_article(article_id):
     logger.info("Tagging %s..." % str(article_id))
 
     s = db.get_db_session()
-    _tag_article_inner(s, article_id)
-    s.commit()
+    try:
+        _tag_article_inner(s, article_id)
+        s.commit()
+    except:
+        s.rollback()
+        raise
 
 
 def _tag_article_inner(s, article_id):
