@@ -12,6 +12,7 @@ if settings.SENTRY_CONNECTION_STRING is not None:
     from raven import Client
     from raven.handlers.logging import SentryHandler
     from raven.conf import setup_logging
+    import logging
     logging.basicConfig(level=logging.WARN)
     client = Client(settings.SENTRY_CONNECTION_STRING)
     handler = SentryHandler(client)
