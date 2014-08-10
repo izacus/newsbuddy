@@ -6,22 +6,20 @@ import argparse
 def do_action(action, arguments):
     print arguments
     if action == "parse-news":
-        import cmd.parse
-        cmd.parse.parse_news()
+        import commands.parse
+        commands.parse.parse_news()
     elif action == "export-solr":
-        import cmd.db_to_solr
-        cmd.db_to_solr.export_to_solr()
+        import commands.db_to_solr
+        commands.db_to_solr.export_to_solr()
     elif action == "runserver":
-        import cmd.runserver
-        cmd.runserver.runserver(arguments.hostname, arguments.port)
+        import commands.runserver
+        commands.runserver.runserver(arguments.hostname, arguments.port)
     elif action == "purge-duplicates":
-        import cmd.purge_duplicates
-        cmd.purge_duplicates.purge_duplicates(arguments.commit)
+        import commands.purge_duplicates
+        commands.purge_duplicates.purge_duplicates(arguments.commit)
     elif action == "tag-news":
-        import cmd.tag_news
-        cmd.tag_news.tag_news(arguments.retag)
-
-
+        import commands.tag_news
+        commands.tag_news.tag_news(arguments.retag)
 
 parser = argparse.ArgumentParser(description="Newsbuddy command-line utility methods.", add_help=True)
 subcommands = parser.add_subparsers(title="commands", dest='action')
