@@ -45,10 +45,3 @@ def _tag_article_inner(s, article_id):
         except NoResultFound:
             tag = db.tags.Tag(tag_name=news_tag, tag_type=tag_type)
         article.tags.append(tag)
-
-        #counter += 1
-        #if counter > 10:
-        #    s.commit()
-        #    s.flush()
-        #    s = db.get_db_session()
-        #    s.add(article)

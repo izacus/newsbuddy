@@ -9,12 +9,13 @@ from requests import Session
 import settings
 from pysolarized import solr
 from pysolarized import from_solr_date
+from sqlalchemy import func
 from sqlalchemy.orm import subqueryload
 from sqlalchemy.orm.exc import NoResultFound
 
 from db.news import NewsItem
 from db.tags import Tag         # Has to be imported for proper relation management
-from db.cache import get_cache
+from db.cache import get_cache, FromCache
 import mining.summarizer
 import mining.entity_extractor
 
@@ -112,6 +113,13 @@ def build_latest_news(offset):
         summary = summarizer.summarize(content)
         del result[u"content"]
         result[u"snippet"] = summary
+
+    # Generate popular todays tags
+    s = db.get_db_session()
+    today = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+    todays_tags = s.query(Tag).join(Tag.news_items).filter(NewsItem.published > today).group_by(Tag.id).having(func.count(Tag.id) > 2).options(FromCache("todays_tags")).all()
+    results[u"common_tags"] = todays_tags
+    s.close()
 
     return results
 
