@@ -19,6 +19,11 @@ angular.module("NewsBuddy").controller("SearchController", ["$scope", "$http", "
         $scope.all_loaded = false;
     };
 
+    $scope.search_query = function(query) {
+        $scope.query = query;
+        $scope.search();
+    }
+
     $scope.search = function() {
         if (!$scope.query)
             return;
@@ -45,6 +50,7 @@ angular.module("NewsBuddy").controller("SearchController", ["$scope", "$http", "
         $scope.all_loaded = false;
         $http.get('/v1/news/latest/?offset=' + $scope.offset).success(function data(data) {
             $scope.loading = false;
+            $scope.common_tags = data["common_tags"];
             applyResults(data["results"]);
             $scope.offset += data["results"].length;
         });

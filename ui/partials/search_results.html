@@ -20,6 +20,12 @@
     </form>
 </div>
 
+<div class="row col-md-12" ng-show="common_tags">
+    <h3 class="text-center">Današnje teme</h3>
+    <hr>
+    <span class="label label-primary label-block" style="cursor: pointer;" data-ng-repeat="tag in common_tags" ng-click="search_query(tag)">{{ tag }}</span>
+</div>
+
 <br />
 <div class="row">
     <div class="col-md-10" infinite-scroll="loadInfinite();" infinite-scroll-disabled="loading || all_loaded" infinite-scroll-distance="2">
