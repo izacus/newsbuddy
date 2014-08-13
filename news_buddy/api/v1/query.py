@@ -117,8 +117,8 @@ def build_latest_news(offset):
     # Generate popular todays tags
     s = db.get_db_session()
     today = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-    todays_tags = s.query(Tag).join(Tag.news_items).filter(NewsItem.published > today).group_by(Tag.id).having(func.count(Tag.id) > 2).options(FromCache("todays_tags")).all()
-    results[u"common_tags"] = todays_tags
+    todays_tags = s.query(Tag, func.count(Tag.id).label('count')).join(Tag.news_items).filter(NewsItem.published > today).group_by(Tag.id).having(func.count(Tag.id) > 2).order_by('count DESC').limit(10).options(FromCache("todays_tags")).all()
+    results[u"common_tags"] = [tag.tag_name for tag, count in todays_tags]
     s.close()
 
     return results
