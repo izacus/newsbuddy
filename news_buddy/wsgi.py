@@ -10,9 +10,5 @@ cache = get_cache()
 cache.invalidate(True)
 
 if settings.SENTRY_CONNECTION_STRING is not None:
-    from raven import Client
-    from raven.middleware import Sentry
-
-    client = Client(settings.SENTRY_CONNECTION_STRING)
-    application = Sentry(application, client=client)
-    client.logger.setLevel(logging.WARNING)
+    from raven.contrib.flask import Sentry
+    sentry = Sentry(app=app, dsn=settings.SENTRY_CONNECTION_STRING, logging=True, level=logging.WARNING)
