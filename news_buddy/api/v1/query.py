@@ -152,7 +152,11 @@ def build_query_suggestions(query):
     parameters = {u"q": query, u"wt": u"json"}
     result = req_session.post(suggest_url, data=parameters)
     result_json = result.json()
-    suggestion_data = result_json["spellcheck"]["suggestions"]
+
+    try:
+        suggestion_data = result_json["spellcheck"]["suggestions"]
+    except KeyError:
+        suggestion_data = []
 
     if len(suggestion_data) == 0:
         return {u"suggestions": [], u"startOffset": 0, u"endOffset": 0, u"fieldSuggestion": None}

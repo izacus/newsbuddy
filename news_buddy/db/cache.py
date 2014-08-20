@@ -7,7 +7,8 @@ from dogpile.cache import make_region
 def get_cache():
     if settings.REDIS_CONFIG and settings.REDIS_CONFIG.get("host"):
         region = make_region(
-            function_key_generator=fn_key_generator
+            function_key_generator=fn_key_generator,
+            key_mangler=key_mangler
         ).configure(
             'dogpile.cache.redis',
             expiration_time=7200,
@@ -20,7 +21,8 @@ def get_cache():
         )
     else:
         region = make_region(
-            function_key_generator=fn_key_generator
+            function_key_generator=fn_key_generator,
+            key_mangler=key_mangler
         ).configure(
             'dogpile.cache.memory',
             expiration_time=7200
@@ -28,6 +30,9 @@ def get_cache():
 
     return region
 
+
+def key_mangler(key):
+    return key.decode('utf-8')
 
 # Default key generator doesn't handle unicode at all so use this to convert it beforehand
 def fn_key_generator(namespace, fn):
