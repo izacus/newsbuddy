@@ -11,4 +11,5 @@ cache.invalidate(True)
 
 if settings.SENTRY_CONNECTION_STRING is not None:
     from raven.contrib.flask import Sentry
-    sentry = Sentry(app=app, dsn=settings.SENTRY_CONNECTION_STRING, logging=True, level=logging.WARNING)
+    sentry = Sentry(dsn=settings.SENTRY_CONNECTION_STRING, logging=True, level=logging.WARN)
+    sentry.init_app(application)

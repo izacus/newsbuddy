@@ -61,7 +61,7 @@ def get_details_id(news_id):
 
 @app.route("/v1/news/suggest/query/", methods=["GET"])
 def get_query_suggestions():
-    query = request.args.get(u"q", None)
+    query = unicode(request.args.get(u"q", None))
     if not query:
         return {u"error": u"Missing q query parameter."}
 
@@ -70,7 +70,7 @@ def get_query_suggestions():
 @app.route("/v1/news/query/", methods=["GET"])
 @set_renderers(BrowsableAPIRenderer, JSONRenderer, AtomXMLRenderer, AtomRenderer)  # Note the order is important
 def get_news():
-    query = request.args.get(u"q", None)
+    query = unicode(request.args.get(u"q", None))
     if not query:
         return {u"error": u"Missing q query parameter."}
 
@@ -97,7 +97,7 @@ def get_news():
 
 @cache.cache_on_arguments()
 def build_latest_news(offset):
-    results = query_for("*", offset, None, True)
+    results = query_for(u"*", offset, None, True)
 
     if u"error" in results:
         return results
