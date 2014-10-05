@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging
+import bs4
 
 import lxml.html
 import re
@@ -72,7 +73,9 @@ class TwentyFourHrsScraper(object):
         if len(content) == 0:
             return None
 
-        text = re.sub("\s\s+", " ", nltk.clean_html(lxml.html.tostring(content[0], encoding="utf-8").decode("utf-8")))
+
+
+        text = re.sub("\s\s+", " ", bs4.BeautifulSoup(lxml.html.tostring(content[0], encoding="utf-8").decode("utf-8")).get_text())
         result["text"] = text
         if u"Preverite vpisani naslov ali uporabite možnost iskanja po naših straneh." in result["text"]:
             return None
